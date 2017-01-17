@@ -20,8 +20,14 @@ class StreamEntry
 
 	function __construct($species_name, $date, $place, $place_level, $count=1, $country_code="US", $comment="", $field_note=0)
 	{
-		if ( mb_detect_encoding($place, "UTF-8", true) ) // Encoding cannot be UTF-8 for AviSys
+		if ( mb_detect_encoding($place, "UTF-8", true) ) // Encoding must be Windows-1252 for AviSys
 			$place = mb_convert_encoding($place, "Windows-1252", "UTF-8");
+
+		if ( mb_detect_encoding($comment, "UTF-8", true) ) // Encoding must be Windows-1252 for AviSys
+			$comment = mb_convert_encoding($comment, "Windows-1252", "UTF-8");
+
+		if ( mb_detect_encoding($field_note, "UTF-8", true) ) // Encoding must be Windows-1252 for AviSys
+			$field_note = mb_convert_encoding($field_note, "Windows-1252", "UTF-8");
 
 		$this->species_name=trim($species_name);
 		$this->place=$place;	// was: trim($place);
