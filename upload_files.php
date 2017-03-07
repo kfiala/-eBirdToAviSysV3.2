@@ -241,7 +241,16 @@ HEREDOC;
 	}
 ?>
 <br style="clear:both" >
-<input type="submit" style="width:7em" value="Do it!" id="subbut" name="locButton" onclick="return checkType();">
+<?php
+$maxLocs = floor(ini_get('max_input_vars') / 5);
+if ($maxLocs < $locnum)
+{
+	echo "<p>Your $locnum locations exceed the limit of $maxLocs locations that can be processed in a single run. ";
+	echo "Please subset your data into smaller files and do multiple runs.</p>";
+}
+else
+	echo '<input type="submit" style="width:7em" value="Do it!" id="subbut" name="locButton" onclick="return checkType();">';
+?>
 <input type="submit" style="width:7em" value="Cancel" id="canbut" name="cancelButton" />
 <span id=donemsg style="display:none">Processing complete, click Reset if you'd like to do another.</span>
 </form>
