@@ -225,7 +225,7 @@ HEREDOC;
 <option value="Nation" $nationselected>Nation</option>
 </select></label>
 
-<label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode[$i]" type="text" value="$country" style="width:2em" maxlength="2" oninput="country_fill($i)"></label>
+<label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode[$i]" type="text" value="$country" style="width:2em" maxlength="3" oninput="country_fill($i)"></label>
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
 <span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
 <br>
