@@ -201,7 +201,8 @@ HEREDOC;
 		$AviSys = $ebirdloc->AviSys;
 		$levtype = $ebirdloc->level;
 		$country = substr($ebirdloc->country,0,2);
-//		if ($levtype == 0) $levtype = " ";
+
+		if (trim($levtype) == '') $levtype = "Site";	// Default
 		if ($levtype == "Site")		$siteselected = "selected"; else 	$siteselected = "";
 		if ($levtype == "City")		$cityselected = "selected"; else		$cityselected = "";
 		if ($levtype == "County")	$countyselected = "selected"; else	$countyselected = "";
