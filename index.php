@@ -6,8 +6,6 @@ require_once './upload_files.php';
 require_once './generate_stream.php';
 require_once './utilities.php';
 
-date_default_timezone_set('America/New_York');
-
 // Global variables.
 $myself = $_SERVER['REQUEST_URI'];
 if (!isset($_SESSION['eBird']['REFERER']))
@@ -51,12 +49,13 @@ if (isset($_POST['locButton']))
 <!DOCTYPE HTML>
 <html>
 
-   <head>
-      <title>eBird to AviSys checklist import</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<script src='functions.js'></script>
-      <link rel="stylesheet" type="text/css" href="eBird.css">
+<head>
+<title>eBird to AviSys checklist import</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src='functions.js'></script>
+<link rel="stylesheet" type="text/css" href="eBird.css">
+<meta name="description" content="eBird to AviSys checklist import will convert eBird checklist files (in csv format) into an AviSys stream file with which you can import the data into AviSys." />
 <meta property="og:image" content="http://www.faintlake.com/images/ebirdtoavisys.png"/>
 <meta property="og:title" content="eBird to AviSys checklist import"/>
 <meta property="og:url" content="http://www.faintlake.com/ebirdtoavisys/"/>
@@ -68,6 +67,16 @@ if (isset($_POST['locButton']))
 
 <body>
 <h1>eBird to AviSys checklist import</h1>
+
+<noscript>
+<p><span class=error>
+Notice: javascript is disabled in your browser.
+This page is minimally usable without javascript, but some features require that you
+enable javascript, or use a different browser that has javascript enabled.
+See <a href="http://enable-javascript.com/" target="_blank">How to enable JavaScript</a>.</span>
+</p>
+</noscript>
+
 <?php
 /*
 echo "<pre>\n";
@@ -96,7 +105,7 @@ if (!$posted)
 			printError($emsg);
 		cleanWork();
 	}
-	$success = upload_form();
+	upload_form();
 }
 else 
 {

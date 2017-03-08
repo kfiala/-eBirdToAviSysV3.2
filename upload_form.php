@@ -16,7 +16,7 @@ function upload_form()
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.faintlake.com/update/">2016 Taxonomy Update for AviSys</a>.
 </p>
-<form enctype="multipart/form-data" method="POST" action="$myself" name="upform" style="width:40em;">
+<form enctype="multipart/form-data" method="POST" action="$myself" name="upform" style="max-width:40em;float:left;">
 <fieldset>
 <legend>File upload</legend>
 <div id=buttons>
@@ -41,6 +41,14 @@ document.getElementById('uplbutn').style.display = 'none';
 </script>
 </fieldset>
 </form>
+
+<fieldset style="float:left;max-width:20em;margin-left: 2em">
+	<legend>Bug alert</legend>
+	<p>Until 8 March 2017 this application had a minor bug that affected sightings from outside of the Lower 48 states
+		of the US. Please read the <a href="bug.html" target="_blank">bug report</a> for full details, and an explanation of how your data can be
+		easily and automatically corrected.</p>
+</fieldset>
+<br style="clear: both">
 <h2>What it is</h2>
 <?php
 	$heredoc = <<<HEREDOC
@@ -66,15 +74,6 @@ Then click the &ldquo;Do it!&rdquo; button that you will see.
 <li>Your AviSys stream file will be downloaded. Save it on your computer, then run Avisys to import it.</li>
 <li>That's it!</li>
 </ol>
-
-<noscript>
-<p><span class=error>
-Notice: javascript is disabled in your browser.
-This page is minimally usable without javascript, but some features require that you
-enable javascript, or use a different browser that has javascript enabled.
-See </span><a href="http://enable-javascript.com/" target="_blank">How to enable JavaScript</a>.
-</p>
-</noscript>
 
 <h2>About species names</h2>
 <p>

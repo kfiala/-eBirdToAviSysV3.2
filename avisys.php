@@ -1,4 +1,6 @@
 <?php
+require_once('maskList.php');
+
 class eBirdLocation
 {
 	var $eBird, $AviSys, $level, $country, $comment;
@@ -15,11 +17,13 @@ class eBirdLocation
 
 class StreamEntry
 {
-	var $species_code, $field_note, $dec_date, $place_level, $country_code;
+	var $species_code, $field_note, $dec_date, $place_level, $country_code, $continentMask;
 	var $comment, $species_name, $place, $count;
 
 	function __construct($species_name, $date, $place, $place_level, $count=1, $country_code="US", $comment="", $field_note=0)
 	{
+		global $maskList;
+
 		if ( mb_detect_encoding($place, "UTF-8", true) ) // Encoding must be Windows-1252 for AviSys
 			$place = mb_convert_encoding($place, "Windows-1252", "UTF-8");
 
@@ -30,16 +34,40 @@ class StreamEntry
 			$field_note = mb_convert_encoding($field_note, "Windows-1252", "UTF-8");
 
 		$this->species_name=trim($species_name);
-		$this->place=$place;	// was: trim($place);
+		$this->place=$place;	// was: trim($place); but AviSys supports trailing blanks in place names
 		$this->place_level = trim($place_level);
 		$this->count = trim($count);
-		$this->country_code = trim($country_code);
+
+		$country_code = strtoupper(trim($country_code));
+		if ($country_code == 'US-AK')	// Special cases for Alaska and Hawaii
+			$country_code = 'AK';
+		if ($country_code == 'US-HI')
+			$country_code = 'HI';
+		if (strlen($country_code) > 3)
+			$country_code = substr(trim($country_code),0,3);	// 3 not 2 in case it is 'RSW' or 'RSE'
+		$country_code = rtrim($country_code,'-');				// In case, e.g., US-NC was reduced to US-
+		$this->country_code = $country_code;
+
 		$this->comment = trim($comment);
 		$this->field_note = trim($field_note);
 
 		$this->species_code = 1000;
+
+		if (isset($maskList[$country_code]))
+		{
+			$this->continentMask = $maskList[$country_code];
+			if ($country_code == 'AK' || $country_code == 'HI')
+				$this->country_code = 'US';
+			else if ($country_code == 'RSW' || $country_code == 'RSE')
+				$this->country_code = 'RS';
+		}
+		else
+		{
+			$this->continentMask = '0000000000';
+		}
+
 /*	From the strtotime documentation:
-Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator between the various components: if the separator is a slash (/), then the American m/d/y is assumed; whereas if the separator is a dash (-) or a dot (.), then the European d-m-y format is assumed. 
+Dates in the m/d/y or d-m-y formats are disambiguated by looking at the separator between the various components: if the separator is a slash (/), then the American m/d/y is assumed; whereas if the separator is a dash (-) or a dot (.), then the European d-m-y format is assumed.
 
 Unfortunately eBird uses the American style with dash separators sometimes, so I have to change dashes to slashes.
 */
@@ -68,7 +96,6 @@ Unfortunately eBird uses the American style with dash separators sometimes, so I
 		if ($this->species_name) $this->species_name = substr($this->species_name,0,36);
 		if ($this->place) $this->place = substr($this->place,0,30);
 		if ($this->comment) $this->comment = substr($this->comment,0,80);
-		if ($this->country_code) $this->country_code = substr($this->country_code,0,2);
 
 		switch($this->place_level)
 		{
@@ -79,7 +106,6 @@ Unfortunately eBird uses the American style with dash separators sometimes, so I
 			case "Nation":	$this->place_level = 7; break;
 			default:	$this->place_level = 0;
 		}
-
 	}
 
 /*
@@ -92,7 +118,7 @@ unsigned char						"C":	15
 unsigned char						"C":	place level
 unsigned char						"C":	2
 SPACE-padded string				"A2":	country code
-hex string, high nibble first	"H10":	0x000d200800
+hex string, high nibble first	"H10":	'000d200800'
 unsigned little-endian long:	"V":	0
 
 unsigned char						"C":	comment length		
@@ -109,12 +135,13 @@ SPACE-padded string				"A4":	"END!"
 	{
 		$stream = pack("VvvvVCCCA2H10VCA80vCA36CA30A4",
 			0,$this->species_code,$this->field_note,0,$this->dec_date,255,$this->place_level,
-			2, $this->country_code, "000d200800", 0, strlen($this->comment), str_pad($this->comment,80), $this->count,
+			2, $this->country_code, $this->continentMask, 0, strlen($this->comment),
+			str_pad($this->comment,80), $this->count,
 			strlen($this->species_name), str_pad($this->species_name,36), strlen($this->place), str_pad($this->place,30),
 			"END!");
 		return $stream;
 	}
-		
+
 }
 class FieldNote
 {
