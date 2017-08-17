@@ -1,6 +1,25 @@
 <?php
 function upload_files()
 {
+	?>
+<script>
+	function avilen(i)
+	{
+		var aviplace = document.getElementById('place'+i).value;
+		var toolong =  document.getElementById('toolong'+i);
+		if (aviplace.length > 30)
+		{
+			toolong.display = 'block';
+			toolong.innerHTML = 'AviSys place name is too long--must be shortened from '+aviplace.length+' characters to 30 or fewer.'
+		}
+		else
+		{
+			toolong.display = 'none';
+			toolong.innerHTML = '';
+		}
+	};
+</script>
+<?php
 	global $myself;
 
 	unset($_SESSION['eBird']['file']);
@@ -45,7 +64,7 @@ function upload_files()
 				case UPLOAD_ERR_EXTENSION:		$emsg = "A PHP extension stopped the file upload"; break;
 				default: $emsg = "Unknown error $fileerror";
 			}
-			if ($fileerror != UPLOAD_ERR_NO_FILE)	
+			if ($fileerror != UPLOAD_ERR_NO_FILE)
 			{
 				printError("Sorry, file $filename could not be received. An error occurred: $emsg");
 				$anyError = TRUE;
@@ -69,7 +88,7 @@ function upload_files()
 		$workname = $path_parts['filename'];
 		$workfile = "$incoming/$workname.csv";
 		$_SESSION['eBird']['file'][] = $workname;
-		
+
 		/* If uploading one file, use same filename for stream file. If multiple uploads,
 		   name the stream file AviSys. */
 		if ($i==0)
@@ -100,7 +119,7 @@ function upload_files()
 			unset($date_column);
 			unset($comments_column);
 			unset($country_column);
-			
+
 			$headings = fgetcsv ( $fh );
 // echo "<ol>";
 			for ($h=0; $h<count($headings); $h++)
@@ -127,11 +146,16 @@ function upload_files()
 			if (!isset($species_column) || !isset($count_column) || !isset($location_column)
 				|| !isset($date_column) /* || !isset($comments_column) */ )
 			{
-				printError("Error: Your csv file $full_filename is not in the expected format. Make sure you download from My eBird->Manage My Observations->View or Edit->Download.");
 				fclose($fh);
+				printError("Error: Your csv file $full_filename is not in the expected format. Make sure you download from My eBird->Manage My Observations->View or Edit->Download.");
+				printError("Details:");
+				if (!isset($species_column))	printError('Your csv file does not have a column labeled "species" or "common name".');
+				if (!isset($count_column))		printError('Your csv file does not have a column labeled "count".');
+				if (!isset($location_column))	printError('Your csv file does not have a column labeled "location".');
+				if (!isset($date_column))		printError('Your csv file does not have a column labeled "date" or "observation date".');
 				$anyError = TRUE;
 				continue;
-			}		
+			}
 
 			$nsightings = 0;
 			while (($sighting = fgetcsv($fh)) !== FALSE)
@@ -171,7 +195,7 @@ function upload_files()
 			}
 		}
 	}
-	
+
 	if ($uploadcount == 0)
 	{
 		printError("Error: No files were successfully uploaded. Be sure to click the Browse... button and select a csv file.");
@@ -213,9 +237,8 @@ HEREDOC;
 <fieldset>
 <legend>Location $locnum</legend>
 <label style="width: 15em">eBird location: $eBird<br>AviSys place:
-<input name="place[$i]" type="text" value="$AviSys" style="width:26em" maxlength="36" autofocus /></label>
+<input oninput="avilen('$i')" name="place[$i]" id="place$i" type="text" value="$AviSys" style="width:26em" autofocus /></label>
 <input name="location[$i]" type="hidden" value="$eBird" >
-
 <label style="margin-left:1em">Type:
 <select name="place_level[$i]" id="place_level[$i]" style="width:6em" onchange="place_sel($i)">
 <option value="">Select:</option>
@@ -229,7 +252,7 @@ HEREDOC;
 <label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode[$i]" type="text" value="$country" style="width:2em" maxlength="3" oninput="country_fill($i)"></label>
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
 <span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
-<br>
+<span class="error" id="toolong$i" display="none">error message</span><script>avilen($i);</script><br>
 <label>Global comment:
 <input name="glocom[$i]" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
 placeholder="Optional: info to insert in each comment for this location"></label>
