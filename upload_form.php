@@ -14,7 +14,7 @@ function upload_form()
 
 	$heredoc = <<<HEREDOC
 <p style="color:red;"><strong>Note:</strong>
-To be current with eBird, install the <a href="http://avisys.faintlake.com/update/">2016 Taxonomy Update for AviSys</a>.
+To be current with eBird, install the <a href="http://avisys.faintlake.com/update/">2017 Taxonomy Update for AviSys</a>.
 </p>
 <form enctype="multipart/form-data" method="POST" action="$myself" name="upform" style="max-width:40em;float:left;">
 <fieldset>
