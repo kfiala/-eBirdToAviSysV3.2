@@ -47,7 +47,7 @@ if (isset($_POST['locButton']))
 
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 
 <head>
 <title>eBird to AviSys checklist import</title>
