@@ -2,23 +2,6 @@
 function upload_files()
 {
 	?>
-<script>
-	function avilen(i)
-	{
-		var aviplace = document.getElementById('place'+i).value;
-		var toolong =  document.getElementById('toolong'+i);
-		if (aviplace.length > 30)
-		{
-			toolong.display = 'block';
-			toolong.innerHTML = 'AviSys place name is too long--must be shortened from '+aviplace.length+' characters to 30 or fewer.'
-		}
-		else
-		{
-			toolong.display = 'none';
-			toolong.innerHTML = '';
-		}
-	};
-</script>
 <?php
 	global $myself;
 
@@ -236,11 +219,11 @@ HEREDOC;
 		$heredoc = <<<HEREDOC
 <fieldset>
 <legend>Location $locnum</legend>
-<label style="width: 15em">eBird location: $eBird<br>AviSys place:
-<input oninput="avilen('$i')" name="place[$i]" id="place$i" type="text" value="$AviSys" style="width:26em" autofocus /></label>
+<label style="width: 15em">eBird location: <span id="eBirdLocation$i">$eBird</span><br>AviSys place:
+<input oninput="placeEdit('$i')" onblur="savePlace('$i')" name="place[$i]" id="place$i" type="text" value="$AviSys" style="width:26em" autofocus /></label>
 <input name="location[$i]" type="hidden" value="$eBird" >
 <label style="margin-left:1em">Type:
-<select name="place_level[$i]" id="place_level[$i]" style="width:6em" onchange="place_sel($i)">
+<select name="place_level[$i]" id="place_level$i" style="width:6em" onchange="place_sel($i)">
 <option value="">Select:</option>
 <option value="Site" $siteselected>Site</option>
 <option value="City" $cityselected>City</option>
@@ -249,14 +232,14 @@ HEREDOC;
 <option value="Nation" $nationselected>Nation</option>
 </select></label>
 
-<label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode[$i]" type="text" value="$country" style="width:2em" maxlength="3" oninput="country_fill($i)"></label>
+<label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode$i" type="text" value="$country" style="width:2em" maxlength="3" onblur="country_fill($i)"></label>
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
 <span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
-<span class="error" id="toolong$i" display="none">error message</span><script>avilen($i);</script><br>
+<span class="error" id="toolong$i"></span><br>
 <label>Global comment:
-<input name="glocom[$i]" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
+<input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
 placeholder="Optional: info to insert in each comment for this location"></label>
-
+<script>lookupPlace($i);placeToolong($i);</script>
 </fieldset>
 HEREDOC;
 		echo $heredoc;

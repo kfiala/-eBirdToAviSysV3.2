@@ -53,12 +53,14 @@ if (isset($_POST['locButton']))
 <title>eBird to AviSys checklist import</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script src='functions.js'></script>
+<script src='ebtoav1801.js'></script>
 <link rel="stylesheet" type="text/css" href="eBird.css">
 <meta name="description" content="eBird to AviSys checklist import will convert eBird checklist files (in csv format) into an AviSys stream file with which you can import the data into AviSys." />
-<meta property="og:image" content="http://www.faintlake.com/images/ebirdtoavisys.png"/>
+<meta property="og:image" content="http://avisys.info/images/ebirdtoavisys.png"/>
+<meta property="og:image:width" content="215"/>
+<meta property="og:image:height" content="200"/>
 <meta property="og:title" content="eBird to AviSys checklist import"/>
-<meta property="og:url" content="http://www.faintlake.com/ebirdtoavisys/"/>
+<meta property="og:url" content="http://avisys.info/ebirdtoavisys/"/>
 <meta property="og:site_name" content="eBird to AviSys checklist import"/>
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="This site provides an easy way to import checklists from eBird into AviSys."/>
@@ -87,7 +89,7 @@ echo "FILES: "; print_r($_FILES);
 echo "</pre>\n";
 */
 
-include dirname(dirname($_SERVER["SCRIPT_FILENAME"])) . '/txt/fbjdk.php'; 
+// include dirname(dirname($_SERVER["SCRIPT_FILENAME"])) . '/txt/fbjdk.php'; 
 
 if (empty($_POST) && empty($_FILES) && isset($_SERVER['CONTENT_LENGTH']))
 {
@@ -114,7 +116,7 @@ else
 		upload_form();
 }
 
-likebutton();
+// likebutton();
 ?>
 
 </body>

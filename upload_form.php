@@ -14,7 +14,7 @@ function upload_form()
 
 	$heredoc = <<<HEREDOC
 <p style="color:red;"><strong>Note:</strong>
-To be current with eBird, install the <a href="http://avisys.faintlake.com/update/">2017 Taxonomy Update for AviSys</a>.
+To be current with eBird, install the <a href="http://avisys.info/update/">2017 Taxonomy Update for AviSys</a>.
 </p>
 <form enctype="multipart/form-data" method="POST" action="$myself" name="upform" style="max-width:40em;float:left;">
 <fieldset>
@@ -41,13 +41,13 @@ document.getElementById('uplbutn').style.display = 'none';
 </script>
 </fieldset>
 </form>
-
+<!--
 <fieldset style="float:left;max-width:20em;margin-left: 2em">
 	<legend>Bug alert</legend>
 	<p>Until 8 March 2017 this application had a minor bug that affected sightings from outside of the Lower 48 states
 		of the US. Please read the <a href="bug.html" target="_blank">bug report</a> for full details, and an explanation of how your data can be
 		easily and automatically corrected.</p>
-</fieldset>
+</fieldset>-->
 <br style="clear: both">
 <h2>What it is</h2>
 <?php
@@ -107,9 +107,36 @@ However, if you are going to import a large amount of data all at once, you real
 and do a dry run of importing the data there before you commit to importing it to your real AviSys database.
 <h3>What's a stream file?</h3>
 <p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
+
+<h2>eBird locations vs. AviSys places</h2>
+<p>In many cases, your eBird location names may not match up exactly with your AviSys place names,
+and you will need to manually enter your corresponding AviSys place name for each eBird location.
+As a convenience, eBird to AviSys checklist import remembers AviSys places from one session to the next.
+Once you "train" it by entering the AviSys place name for an eBird location, the name pairing will be saved for future use.
+The Places data is stored locally in your browser. This has a couple of consequences.</p>
+<ul>
+<li>If you use more than one browser, you have to "train" each one separately.</li>
+<li>
+If you decide to clear private data from your browser, the Places data
+is subject to deletion. If it gets deleted, you will have to repeat the training.
+<ul>
+<li>In the Firefox "Clear Recent History" dialog, 
+selecting "Offline Website Data" will clear your Places data and you will have to recreate it.</li>
+<li>In the Chrome "Clear browsing data" dialog, 
+selecting "Cookies and other site data" will clear your Places.</li>
+<li>
+In Microsoft browsers (Edge and IE) you can't clear the data
+under "Clear browsing data", you have to get down into developer
+tools, which you probably are not going to do.
+</li>
+</ul>
+</li>
+</ul>	
+
+
 <div style="float:right">
 <p>
-<a href="/ebirdtools/">More eBird tools</a>
+<a href="http://www.faintlake.com/ebirdtools/">More eBird tools</a>
 </p>
 <p>
 
