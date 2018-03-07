@@ -1,8 +1,6 @@
 <?php
 function upload_files()
 {
-	?>
-<?php
 	global $myself;
 
 	unset($_SESSION['eBird']['file']);
@@ -130,7 +128,7 @@ function upload_files()
 				|| !isset($date_column) /* || !isset($comments_column) */ )
 			{
 				fclose($fh);
-				printError("Error: Your csv file $full_filename is not in the expected format. Make sure you download from My eBird->Manage My Observations->View or Edit->Download.");
+				printError("Error: Your csv file $full_filename is not in the expected format.");
 				printError("Details:");
 				if (!isset($species_column))	printError('Your csv file does not have a column labeled "species" or "common name".');
 				if (!isset($count_column))		printError('Your csv file does not have a column labeled "count".');
