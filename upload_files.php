@@ -204,10 +204,10 @@ HEREDOC;
 	foreach ($locations as $ebirdloc)
 	{
 		$locnum = $i+1;
-		$eBird = $ebirdloc->eBird;
-		$AviSys = $ebirdloc->AviSys;
+		$eBird = htmlspecialchars($ebirdloc->eBird);
+		$AviSys = htmlspecialchars($ebirdloc->AviSys);
 		$levtype = $ebirdloc->level;
-		$country = substr($ebirdloc->country,0,2);
+		$country = htmlspecialchars(substr($ebirdloc->country,0,2));
 
 		if (trim($levtype) == '') $levtype = "Site";	// Default
 		if ($levtype == "Site")		$siteselected = "selected"; else 	$siteselected = "";
