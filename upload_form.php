@@ -16,11 +16,12 @@ function upload_form()
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.info/update/">2017 Taxonomy Update for AviSys</a>.
 </p>
-<form enctype="multipart/form-data" method="POST" action="$myself" name="upform" style="max-width:40em;float:left;">
-<fieldset>
+<form enctype="multipart/form-data" method="POST" action="$myself" name="upform">
+<fieldset style="max-width:40em;float:left;">
 <legend>File upload</legend>
 <div id=buttons>
 <label class="input" for="file0">Select one or more $upload_max eBird csv files to be converted for AviSys, then click "Upload".</label>
+<br>
 <input class="upload" id="file0" name="fileupload[0]" type="file"  style="width:35em" onclick="document.getElementById('uplbutn').style.display = 'block';filebutton(1,$max_file_uploads);return true;"/>
 </div>
 HEREDOC;
@@ -40,14 +41,18 @@ Click to upload the selected checklist(s).
 document.getElementById('uplbutn').style.display = 'none';
 </script>
 </fieldset>
+
+<fieldset style="float: left">
+	<legend>Options</legend>
+	Summarize by<br>
+
+<label><input type="radio" name="merged" value="1" checked/>Location</label>
+<br>
+<label><input type="radio" name="merged" value="0" />Checklist</label>
+<br><a href="#summarize"><span onmouseover="sumHI();">What's this?</span></a>
+<script>function sumHI(){document.getElementById('summarize').style.color='red';}</script>
+</fieldset>
 </form>
-<!--
-<fieldset style="float:left;max-width:20em;margin-left: 2em">
-	<legend>Bug alert</legend>
-	<p>Until 8 March 2017 this application had a minor bug that affected sightings from outside of the Lower 48 states
-		of the US. Please read the <a href="bug.html" target="_blank">bug report</a> for full details, and an explanation of how your data can be
-		easily and automatically corrected.</p>
-</fieldset>-->
 <br style="clear: both">
 <h2>What it is</h2>
 <?php
@@ -108,6 +113,34 @@ and do a dry run of importing the data there before you commit to importing it t
 <h3>What's a stream file?</h3>
 <p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
 
+<h2 id="summarize">Summarize by location or checklist</h2>
+<p>
+When you upload your checklists, but before you generate the AviSys
+stream file, eBird to AviSys checklist import gives you a summary of
+what you have uploaded. By default, the summary is by location. In other
+words, no matter how many checklists you upload for a location, the
+summary will only have a single entry for the location. This is
+"Summarize by location". In the summary form, you have the option to
+enter a global comment that will be added to all observations for that
+location.
+</p><p>
+Sometimes you might prefer to be able to enter a custom comment for each
+checklist rather than for each location. In that case, select "Summarize
+by checklist", and the summary will contain an entry for each checklist.
+Each entry will display the time and effort data for the checklist, so
+that you can recognize it.
+</p><p>
+Whichever type of summary you choose, the generated stream file will be
+the same, except for anything that you enter in the Global comment field.
+</p><p>
+"Summarize by checklist" only works when you have one checklist per
+file, as is always the case for checklists downloaded directly from
+eBird. Also, it requires that the csv file has columns headed "Start
+time", "Duration", and "Distance". Again, checklists downloaded directly
+from eBird meet this requirement.
+</p>
+
+
 <h2>eBird locations vs. AviSys places</h2>
 <p>In many cases, your eBird location names may not match up exactly with your AviSys place names,
 and you will need to manually enter your corresponding AviSys place name for each eBird location.
@@ -131,8 +164,7 @@ tools, which you probably are not going to do.
 </li>
 </ul>
 </li>
-</ul>	
-
+</ul>
 
 <div style="float:right">
 <p>

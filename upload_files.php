@@ -22,6 +22,12 @@ function upload_files()
 	$totalbytes = 0;
 	$locations = array();
 
+	if (isset($_POST['merged']))
+	{
+		$merged = $_POST['merged'];
+	}
+	else $merged = true;
+
 	ini_set("auto_detect_line_endings", "1"); // mac compatibility
 
 	for ($i=0; $i<$numfiles; $i++)
@@ -89,7 +95,6 @@ function upload_files()
 			continue;
 		}
 
-
 		/* Process the column headings, and get the locations. */
 		$fh = fopen($workfile,"r") or die("<p>Could not open work file</p>");
 		if ($fh)
@@ -102,10 +107,8 @@ function upload_files()
 			unset($country_column);
 
 			$headings = fgetcsv ( $fh );
-// echo "<ol>";
 			for ($h=0; $h<count($headings); $h++)
 			{
-//				echo "<li>$headings[$h]</li>";
 				$head = strtolower($headings[$h]);
 				switch ($head)
 				{
@@ -120,10 +123,16 @@ function upload_files()
 					case "country":
 					case "state/province":
 					case "s/p":			$country_column = $h; break;
+
+//					case "time":
+					case "start time":	$time_column = $h; break;
+//					case "duration (min)":
+					case "duration":		$duration_column = $h; break;
+//					case "distance traveled (km)":
+					case "distance":		$distance_column = $h; break;
 					default:
 				}
 			}
-// echo "</ol>";
 			if (!isset($species_column) || !isset($count_column) || !isset($location_column)
 				|| !isset($date_column) /* || !isset($comments_column) */ )
 			{
@@ -134,6 +143,18 @@ function upload_files()
 				if (!isset($count_column))		printError('Your csv file does not have a column labeled "count".');
 				if (!isset($location_column))	printError('Your csv file does not have a column labeled "location".');
 				if (!isset($date_column))		printError('Your csv file does not have a column labeled "date" or "observation date".');
+				$anyError = TRUE;
+				continue;
+			}
+			
+			if (!$merged && (!isset($time_column) || !isset($duration_column) || !isset($distance_column) ) )
+			{
+				fclose($fh);
+				printError("Error: Your csv file $full_filename is not in the expected format.");
+				printError("Details:");
+				if (!isset($time_column))	printError('Your csv file does not have a column labeled "time" or "start time".');
+				if (!isset($duration_column))		printError('Your csv file does not have a column labeled "duration".');
+				if (!isset($distance_column))	printError('Your csv file does not have a column labeled "distance".');
 				$anyError = TRUE;
 				continue;
 			}
@@ -148,6 +169,14 @@ function upload_files()
 					$country = $sighting[$country_column];
 				else
 					$country = "US";
+
+				if (!$merged)
+				{	
+					$startTime = $sighting[$time_column];
+					$duration = $sighting[$duration_column];
+					$distance = $sighting[$distance_column];
+				}
+
 				if (isset($_SESSION['eBird']['place'][$location]))
 				{	// $_SESSION['eBird']['place'] would only have been set by a previous stream generation.
 					// Here we pick up any settings of AviSys location, level, or country that the user made then.
@@ -161,8 +190,20 @@ function upload_files()
 					$Avlevel = " ";
 					$Avcountry = $country;
 				}
-				if (!isset($locations[$location]))
-					$locations[$location] = new eBirdLocation($location,$Avplace,$Avlevel,$Avcountry);
+				if ($merged)
+				{
+					$locationIndex = $location;
+				}
+				else
+				{
+					$locationIndex = "$location$i";
+				}
+				if (!isset($locations[$locationIndex]))
+				{
+					$locations[$locationIndex] = new eBirdLocation($location,$Avplace,$Avlevel,$Avcountry);
+					if (!$merged)
+						$locations[$locationIndex]->addTimeEffort($date,$startTime,$duration,$distance);
+				}
 				$nsightings++;
 			}
 			$empty_file = ($nsightings==0);
@@ -204,8 +245,25 @@ HEREDOC;
 		$locnum = $i+1;
 		$eBird = htmlspecialchars($ebirdloc->eBird);
 		$AviSys = htmlspecialchars($ebirdloc->AviSys);
-		$levtype = $ebirdloc->level;
+		$levtype = htmlspecialchars($ebirdloc->level);
 		$country = htmlspecialchars(substr($ebirdloc->country,0,2));
+
+		if (!$merged)
+		{
+			$date = htmlspecialchars($ebirdloc->date);
+			$startTime = htmlspecialchars($ebirdloc->startTime);
+			$duration = htmlspecialchars($ebirdloc->duration);
+			$distance = htmlspecialchars($ebirdloc->distance);
+			$timeEffort = "$date &ndash; $startTime &ndash; $duration &ndash; $distance<br>";
+			$legendLabel = 'Checklist';
+			$eachComment = "each comment for this checklist";
+		}
+		else
+		{
+			$timeEffort = '';
+			$legendLabel = 'Location';
+			$eachComment = "each comment for this location";
+		}
 
 		if (trim($levtype) == '') $levtype = "Site";	// Default
 		if ($levtype == "Site")		$siteselected = "selected"; else 	$siteselected = "";
@@ -216,7 +274,7 @@ HEREDOC;
 
 		$heredoc = <<<HEREDOC
 <fieldset>
-<legend>Location $locnum</legend>
+<legend>$legendLabel $locnum</legend>
 <label style="width: 15em">eBird location: <span id="eBirdLocation$i">$eBird</span><br>AviSys place:
 <input oninput="placeEdit('$i')" onblur="savePlace('$i')" name="place[$i]" id="place$i" type="text" value="$AviSys" style="width:26em" autofocus /></label>
 <input name="location[$i]" type="hidden" value="$eBird" >
@@ -234,9 +292,11 @@ HEREDOC;
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
 <span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
 <span class="error" id="toolong$i"></span><br>
+$timeEffort
+<input type="hidden" name="merged" value=$merged>
 <label>Global comment:
 <input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
-placeholder="Optional: info to insert in each comment for this location"></label>
+placeholder="Optional: info to insert in $eachComment"></label>
 <script>lookupPlace($i);placeToolong($i);</script>
 </fieldset>
 HEREDOC;

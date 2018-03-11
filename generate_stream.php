@@ -16,21 +16,27 @@ function generate_stream()
 	$ccode = $_POST['ccode'];
 	$glocom = $_POST['glocom'];
 	$nsites = min(count($place),count($location),count($place_level),count($ccode),count($glocom));
+	$merged = $_POST['merged'];
 
 	$stream = array();
 	ini_set("auto_detect_line_endings", "1"); // mac compatibility
 
 	for ($i=0; $i<$nsites; $i++)
 	{
-		if (!isset($_SESSION['eBird']['place'][$location[$i]]))
-			$_SESSION['eBird']['place'][$location[$i]] = new eBirdLocation($location[$i], $place[$i], $place_level[$i], strtoupper($ccode[$i]), $glocom[$i]);
+		if ($merged)
+			$locationIndex = $location[$i];
+		else
+			$locationIndex = $location[$i].$i;
+
+		if (!isset($_SESSION['eBird']['place'][$locationIndex]))
+			$_SESSION['eBird']['place'][$locationIndex] = new eBirdLocation($location[$i], $place[$i], $place_level[$i], strtoupper($ccode[$i]), $glocom[$i]);
 		else
 		{
-			$_SESSION['eBird']['place'][$location[$i]]->eBird	= $location[$i];
-			$_SESSION['eBird']['place'][$location[$i]]->AviSys	= $place[$i];
-			$_SESSION['eBird']['place'][$location[$i]]->level	= $place_level[$i];
-			$_SESSION['eBird']['place'][$location[$i]]->country= strtoupper($ccode[$i]);
-			$_SESSION['eBird']['place'][$location[$i]]->comment= $glocom[$i];
+			$_SESSION['eBird']['place'][$locationIndex]->eBird	= $location[$i];
+			$_SESSION['eBird']['place'][$locationIndex]->AviSys = $place[$i];
+			$_SESSION['eBird']['place'][$locationIndex]->level	= $place_level[$i];
+			$_SESSION['eBird']['place'][$locationIndex]->country = strtoupper($ccode[$i]);
+			$_SESSION['eBird']['place'][$locationIndex]->comment = $glocom[$i];
 		}
 	}
 
@@ -67,6 +73,8 @@ function generate_stream()
 			{
 				$location = $sighting[$location_column];
 				$location = validUTF8($location);
+				if (!$merged)
+					$location .= $w;
 				$location = $_SESSION['eBird']['place'][$location];
 
 				if	(isset($comments_column) && isset($sighting[$comments_column]))

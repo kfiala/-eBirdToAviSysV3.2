@@ -4,6 +4,7 @@ require_once('maskList.php');
 class eBirdLocation
 {
 	var $eBird, $AviSys, $level, $country, $comment;
+	var $date,$startTime,$duration,$distance;
 
 	function __construct($eBirdName, $AviSysName, $level, $country, $comment="")
 	{
@@ -12,7 +13,15 @@ class eBirdLocation
 		$this->level = $level;
 		$this->country = $country;
 		$this->comment = $comment;
-	}	
+	}
+
+	function addTimeEffort($date,$startTime,$duration,$distance)
+	{
+		$this->date = $date;
+		$this->startTime = $startTime;
+		$this->duration = $duration;
+		$this->distance = $distance;
+	}
 }
 
 class StreamEntry
