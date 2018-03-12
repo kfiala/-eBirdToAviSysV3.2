@@ -4,8 +4,8 @@ function generate_stream()
 	global $myself;
 /*
 echo '<pre>';
-echo "SESSION: "; print_r($_SESSION);
-// echo "POST: "; print_r($_POST);
+//echo "SESSION: "; print_r($_SESSION);
+echo "POST: "; print_r($_POST);
 echo "</pre>\n";
 */
 
@@ -53,9 +53,14 @@ echo "</pre>\n";
 					case "observation date":	$date_column = $h; break;
 					case "species comments":
 					case "comments":	$comments_column = $h; break;
+					case "country":
+					case "state/province":
+					case "s/p":			$country_column = $h; break;
 
 					case "time":
 					case "start time":	$time_column = $h; break;
+
+					case "county":			$county_column = $h; break;
 					default:
 				}
 			}
@@ -64,12 +69,25 @@ echo "</pre>\n";
 				die("File is not in expected format");
 			while (($sighting = fgetcsv($fh)) !== FALSE)
 			{
-				$location = $sighting[$location_column];
-				$location = validUTF8($location);
+				$locationName = $sighting[$location_column];
+
+				if (isset($country_column))
+				{
+					$stateProv = $sighting[$country_column];
+					$locationName .= " $stateProv";
+					if (isset($county_column))
+					{
+						$county = $sighting[$county_column];
+						if ($county)
+							$locationName .= " $county";
+					}
+				}
+
+				$locationName = validUTF8($locationName);
 				if ($merged)
-					$locationIndex = $location;
+					$locationIndex = $locationName;
 				else
-					$locationIndex = $location . $sighting[$date_column].$sighting[$time_column];
+					$locationIndex = $locationName . $sighting[$date_column].$sighting[$time_column];
 				$location = $locationData[$locationIndex];
 
 				if	(isset($comments_column) && isset($sighting[$comments_column]))

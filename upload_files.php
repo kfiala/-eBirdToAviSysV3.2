@@ -122,9 +122,12 @@ function upload_files()
 					case "duration":		$duration_column = $h; break;
 					case "distance traveled (km)":
 					case "distance":		$distance_column = $h; break;
+
+					case "county":				$county_column = $h; break;
 					default:
 				}
 			}
+
 			if (!isset($species_column) || !isset($count_column) || !isset($location_column)
 				|| !isset($date_column) /* || !isset($comments_column) */ )
 			{
@@ -172,6 +175,18 @@ function upload_files()
 				$Avplace = $location;
 				$Avlevel = " ";
 				$Avcountry = $country;
+
+				if (isset($country_column))
+				{
+					$stateProv = $sighting[$country_column];
+					$location .= " $stateProv";
+					if (isset($county_column))
+					{
+						$county = $sighting[$county_column];
+						if ($county)
+							$location .= " $county";
+					}
+				}
 
 				$locationIndex = $merged ? $location : $location . $date . $startTime;
 				if (!isset($locations[$locationIndex]))
