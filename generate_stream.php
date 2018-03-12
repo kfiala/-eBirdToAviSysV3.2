@@ -2,11 +2,16 @@
 function generate_stream()
 {
 	global $myself;
+/*
+echo '<pre>';
+echo "SESSION: "; print_r($_SESSION);
+// echo "POST: "; print_r($_POST);
+echo "</pre>\n";
+*/
 
 	$notes = array();
 
-	if (!isset($_SESSION['eBird']['place']))
-		$_SESSION['eBird']['place'] = array();
+	$locationData = array();
 
 	$incoming = dirname(__FILE__) . "/incoming";
 
@@ -23,21 +28,8 @@ function generate_stream()
 
 	for ($i=0; $i<$nsites; $i++)
 	{
-		if ($merged)
-			$locationIndex = $location[$i];
-		else
-			$locationIndex = $location[$i].$i;
-
-		if (!isset($_SESSION['eBird']['place'][$locationIndex]))
-			$_SESSION['eBird']['place'][$locationIndex] = new eBirdLocation($location[$i], $place[$i], $place_level[$i], strtoupper($ccode[$i]), $glocom[$i]);
-		else
-		{
-			$_SESSION['eBird']['place'][$locationIndex]->eBird	= $location[$i];
-			$_SESSION['eBird']['place'][$locationIndex]->AviSys = $place[$i];
-			$_SESSION['eBird']['place'][$locationIndex]->level	= $place_level[$i];
-			$_SESSION['eBird']['place'][$locationIndex]->country = strtoupper($ccode[$i]);
-			$_SESSION['eBird']['place'][$locationIndex]->comment = $glocom[$i];
-		}
+		$locationData[$location[$i]] = 
+			new eBirdLocation($location[$i],$place[$i],$place_level[$i],strtoupper($ccode[$i]),$glocom[$i]);
 	}
 
 	for ($w=0; $w<count($_SESSION['eBird']['file']); $w++)
@@ -48,11 +40,9 @@ function generate_stream()
 		if ($fh)
 		{
 			$headings = fgetcsv ( $fh );
-// echo "<ol>";
 			for ($h=0; $h<count($headings); $h++)
 			{
 				$head = strtolower($headings[$h]);
-//				echo "<li>$headings[$h] = $head</li>";
 				switch ($head)
 				{
 					case "common name":
@@ -63,6 +53,9 @@ function generate_stream()
 					case "observation date":	$date_column = $h; break;
 					case "species comments":
 					case "comments":	$comments_column = $h; break;
+
+					case "time":
+					case "start time":	$time_column = $h; break;
 					default:
 				}
 			}
@@ -73,9 +66,11 @@ function generate_stream()
 			{
 				$location = $sighting[$location_column];
 				$location = validUTF8($location);
-				if (!$merged)
-					$location .= $w;
-				$location = $_SESSION['eBird']['place'][$location];
+				if ($merged)
+					$locationIndex = $location;
+				else
+					$locationIndex = $location . $sighting[$date_column].$sighting[$time_column];
+				$location = $locationData[$locationIndex];
 
 				if	(isset($comments_column) && isset($sighting[$comments_column]))
 					$comments = $sighting[$comments_column];
@@ -122,14 +117,24 @@ function generate_stream()
 		}
 	}
 
+/*
+echo "<pre>locationData:\n";
+//echo "SESSION: "; print_r($_SESSION);
+print_r($locationData);
+echo "</pre>\n";
+*/
+
 	$str_file = "$incoming/$workname.str";
 	$handle = fopen($str_file,"w");
 	foreach(	$stream as $data )
 		fwrite($handle,$data->toStream());
 	fclose($handle);
 
-	$streamfile = $_SESSION['eBird']['streamfile'];
-	if ($streamfile=="") $streamfile = "avisys";
+// If uploading one file, use same filename for stream file. If multiple uploads, name the stream file AviSys.
+	if (count($_SESSION['eBird']['file']) == 1)
+		$streamfile = $_SESSION['eBird']['file'][0];
+	else
+		$streamfile = 'AviSys';
 
 	if (count($notes))
 	{

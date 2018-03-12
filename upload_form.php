@@ -133,11 +133,9 @@ that you can recognize it.
 Whichever type of summary you choose, the generated stream file will be
 the same, except for anything that you enter in the Global comment field.
 </p><p>
-"Summarize by checklist" only works when you have one checklist per
-file, as is always the case for checklists downloaded directly from
-eBird. Also, it requires that the csv file has columns headed "Start
-time", "Duration", and "Distance". Again, checklists downloaded directly
-from eBird meet this requirement.
+"Summarize by checklist" requires that the csv file has columns headed
+"Start time", "Duration", and "Distance".
+Checklists downloaded directly from eBird meet this requirement.
 </p>
 
 

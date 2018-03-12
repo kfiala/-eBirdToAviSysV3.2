@@ -4,9 +4,8 @@ function upload_files()
 	global $myself;
 
 	unset($_SESSION['eBird']['file']);
-	unset($_SESSION['eBird']['streamfile']);
 
-	$numfiles = count($_FILES['fileupload']['name']);
+	$numfiles = isset($_FILES['fileupload']['name']) ? count($_FILES['fileupload']['name']) : 0;
 	$uploadcount = 0;
 
 	if ($numfiles == 0)
@@ -76,13 +75,6 @@ function upload_files()
 		$workfile = "$incoming/$workname.csv";
 		$_SESSION['eBird']['file'][] = $workname;
 
-		/* If uploading one file, use same filename for stream file. If multiple uploads,
-		   name the stream file AviSys. */
-		if ($i==0)
-			$_SESSION['eBird']['streamfile'] = $filename;
-		else
-			$_SESSION['eBird']['streamfile'] = 'AviSys';
-
 		if (move_uploaded_file($filetemp,$workfile))
 		{
 //			echo "<p>Received {$_FILES['fileupload']['name'][$i]} as $workfile, size $filesize, from tempfile $filetemp.</p>",PHP_EOL;
@@ -124,11 +116,11 @@ function upload_files()
 					case "state/province":
 					case "s/p":			$country_column = $h; break;
 
-//					case "time":
+					case "time":
 					case "start time":	$time_column = $h; break;
-//					case "duration (min)":
+					case "duration (min)":
 					case "duration":		$duration_column = $h; break;
-//					case "distance traveled (km)":
+					case "distance traveled (km)":
 					case "distance":		$distance_column = $h; break;
 					default:
 				}
@@ -170,40 +162,25 @@ function upload_files()
 				else
 					$country = "US";
 
-				if (!$merged)
-				{	
+				if (isset($time_column))
 					$startTime = $sighting[$time_column];
+				if (isset($duration_column))
 					$duration = $sighting[$duration_column];
-					$distance = $sighting[$distance_column];
-				}
+				if (isset($distance_column))
+					$distance = isset($sighting[$distance_column]) ? $sighting[$distance_column] : '';
 
-				if (isset($_SESSION['eBird']['place'][$location]))
-				{	// $_SESSION['eBird']['place'] would only have been set by a previous stream generation.
-					// Here we pick up any settings of AviSys location, level, or country that the user made then.
-					$Avplace = $_SESSION['eBird']['place'][$location]->AviSys;
-					$Avlevel = $_SESSION['eBird']['place'][$location]->level;
-					$Avcountry = $_SESSION['eBird']['place'][$location]->country;
-				}
-				else
-				{
-					$Avplace = $location;
-					$Avlevel = " ";
-					$Avcountry = $country;
-				}
-				if ($merged)
-				{
-					$locationIndex = $location;
-				}
-				else
-				{
-					$locationIndex = "$location$i";
-				}
+				$Avplace = $location;
+				$Avlevel = " ";
+				$Avcountry = $country;
+
+				$locationIndex = $merged ? $location : $location . $date . $startTime;
 				if (!isset($locations[$locationIndex]))
 				{
 					$locations[$locationIndex] = new eBirdLocation($location,$Avplace,$Avlevel,$Avcountry);
 					if (!$merged)
 						$locations[$locationIndex]->addTimeEffort($date,$startTime,$duration,$distance);
 				}
+
 				$nsightings++;
 			}
 			$empty_file = ($nsightings==0);
@@ -240,7 +217,18 @@ As necessary, change each location name to the corresponding AviSys place name.<
 <form method="POST" action="$myself" style="width:55em">
 HEREDOC;
 	echo $heredoc;
-	foreach ($locations as $ebirdloc)
+	if ($merged)
+	{
+		$timeEffort = '';
+		$legendLabel = 'Location';
+		$eachComment = "each comment for this location";
+	}
+	else
+	{
+		$legendLabel = 'Checklist';
+		$eachComment = "each comment for this checklist";
+	}
+	foreach ($locations as $locationIndex => $ebirdloc)
 	{
 		$locnum = $i+1;
 		$eBird = htmlspecialchars($ebirdloc->eBird);
@@ -255,15 +243,8 @@ HEREDOC;
 			$duration = htmlspecialchars($ebirdloc->duration);
 			$distance = htmlspecialchars($ebirdloc->distance);
 			$timeEffort = "$date &ndash; $startTime &ndash; $duration &ndash; $distance<br>";
-			$legendLabel = 'Checklist';
-			$eachComment = "each comment for this checklist";
 		}
-		else
-		{
-			$timeEffort = '';
-			$legendLabel = 'Location';
-			$eachComment = "each comment for this location";
-		}
+
 
 		if (trim($levtype) == '') $levtype = "Site";	// Default
 		if ($levtype == "Site")		$siteselected = "selected"; else 	$siteselected = "";
@@ -277,7 +258,7 @@ HEREDOC;
 <legend>$legendLabel $locnum</legend>
 <label style="width: 15em">eBird location: <span id="eBirdLocation$i">$eBird</span><br>AviSys place:
 <input oninput="placeEdit('$i')" onblur="savePlace('$i')" name="place[$i]" id="place$i" type="text" value="$AviSys" style="width:26em" autofocus /></label>
-<input name="location[$i]" type="hidden" value="$eBird" >
+<input name="location[$i]" type="hidden" value="$locationIndex" >
 <label style="margin-left:1em">Type:
 <select name="place_level[$i]" id="place_level$i" style="width:6em" onchange="place_sel($i)">
 <option value="">Select:</option>
@@ -293,7 +274,6 @@ HEREDOC;
 <span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
 <span class="error" id="toolong$i"></span><br>
 $timeEffort
-<input type="hidden" name="merged" value=$merged>
 <label>Global comment:
 <input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
 placeholder="Optional: info to insert in $eachComment"></label>
@@ -309,11 +289,13 @@ HEREDOC;
 $maxLocs = floor(ini_get('max_input_vars') / 5);
 if ($maxLocs < $locnum)
 {
-	echo "<p>Your $locnum locations exceed the limit of $maxLocs locations that can be processed in a single run. ";
+	$itemType = $merged ? 'locations' : 'checklists';
+	echo "<p>Your $locnum $itemType exceed the limit of $maxLocs $itemType that can be processed in a single run. ";
 	echo "Please subset your data into smaller files and do multiple runs.</p>";
 }
 else
 	echo '<input type="submit" style="width:7em" value="Do it!" id="subbut" name="locButton" onclick="return checkType();">';
+echo "<input type=hidden name='merged' value='$merged'>";
 ?>
 <input type="submit" style="width:7em" value="Cancel" id="canbut" name="cancelButton" />
 <span id=donemsg style="display:none">Processing complete, click Reset if you'd like to do another.</span>
