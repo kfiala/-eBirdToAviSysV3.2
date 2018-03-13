@@ -100,6 +100,12 @@ Unfortunately eBird uses the American style with dash separators sometimes, so I
 		$year = date("Y",$date) - 1930;
 		$daystring = date("md",$date);
 		$date = $year . $daystring;
+
+		if ($year < 0)
+			$year = 0;
+		else if ($year >= 100)
+			$year = $year % 100;
+
 		$this->dec_date = $date;
 
 		if ($this->species_name) $this->species_name = substr($this->species_name,0,36);

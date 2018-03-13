@@ -164,6 +164,12 @@ tools, which you probably are not going to do.
 </li>
 </ul>
 
+<h2>Date</h2>
+<p>AviSys can only record <a href="/2030.html">dates between Jan 1, 1930 and Dec 31, 2029</a>. 
+Any dates older than 1930 will be recorded with a year of 1930.
+Dates after 2030 will be recorded with a year 100 years earlier.
+</p>
+
 <div style="float:right">
 <p>
 <a href="http://www.faintlake.com/ebirdtools/">More eBird tools</a>
