@@ -111,14 +111,15 @@ Unfortunately eBird uses the American style with dash separators sometimes, so I
 		if ($this->species_name) $this->species_name = substr($this->species_name,0,36);
 		if ($this->place) $this->place = substr($this->place,0,30);
 		if ($this->comment) $this->comment = substr($this->comment,0,80);
-
+// The place number needs to be set within the range for the level, but the exact value is not used.
+// I set the value to the highest number for the level.
 		switch($this->place_level)
 		{
-			case "Site":	$this->place_level = 0; break;
-			case "City":	$this->place_level = 1; break;
-			case "County":	$this->place_level = 3; break;
-			case "State":	$this->place_level = 5; break;
-			case "Nation":	$this->place_level = 7; break;
+			case "Site":	$this->place_level =  450; break;
+			case "City":	$this->place_level =  900; break;
+			case "County":	$this->place_level = 1350; break;
+			case "State":	$this->place_level = 1800; break;
+			case "Nation":	$this->place_level = 2250; break;
 			default:	$this->place_level = 0;
 		}
 	}
@@ -129,8 +130,8 @@ unsigned little-endian short:	"v":	species code
 unsigned little-endian short:	"v":	field note id
 unsigned little-endian short:	"v":	0
 										"V":	date
-unsigned char						"C":	15
-unsigned char						"C":	place level
+unsigned little-endian short: "v": place level (set to highest place number for the level)
+
 unsigned char						"C":	2
 SPACE-padded string				"A2":	country code
 hex string, high nibble first	"H10":	'000d200800'
@@ -148,8 +149,8 @@ SPACE-padded string				"A4":	"END!"
 */
 	function toStream()
 	{
-		$stream = pack("VvvvVCCCA2H10VCA80vCA36CA30A4",
-			0,$this->species_code,$this->field_note,0,$this->dec_date,255,$this->place_level,
+		$stream = pack("VvvvVvCA2H10VCA80vCA36CA30A4",
+			0,$this->species_code,$this->field_note,0,$this->dec_date,$this->place_level,
 			2, $this->country_code, $this->continentMask, 0, strlen($this->comment),
 			str_pad($this->comment,80), $this->count,
 			strlen($this->species_name), str_pad($this->species_name,36), strlen($this->place), str_pad($this->place,30),
