@@ -60,7 +60,7 @@ class StreamEntry
 		$this->comment = trim($comment);
 		$this->field_note = trim($field_note);
 
-		$this->species_code = 1000;
+		$this->species_code = 1000;	// Arbitrary value; AviSys does not use the value.
 
 		if (isset($maskList[$country_code]))
 		{
@@ -125,27 +125,27 @@ Unfortunately eBird uses the American style with dash separators sometimes, so I
 	}
 
 /*
-unsigned little-endian long:	"V":	0
-unsigned little-endian short:	"v":	species code
-unsigned little-endian short:	"v":	field note id
-unsigned little-endian short:	"v":	0
-										"V":	date
-unsigned little-endian short: "v": place level (set to highest place number for the level)
+unsigned little-endian long:	"V":		0
+unsigned little-endian short:	"v":		species code
+unsigned little-endian short:	"v":		field note id
+unsigned little-endian short:	"v":		0
+										"V":		date
+unsigned little-endian short: "v": 		place level
 
-unsigned char						"C":	2
-SPACE-padded string				"A2":	country code
-hex string, high nibble first	"H10":	'000d200800'
-unsigned little-endian long:	"V":	0
+unsigned char						"C":		2 (country code length)
+SPACE-padded string				"A2":		country code
+hex string, high nibble first	"H10":	continent mask
+unsigned little-endian long:	"V":		0
 
-unsigned char						"C":	comment length		
-SPACE-padded string				"A80":	comment (80 chars)	
+unsigned char						"C":		comment length
+SPACE-padded string				"A80":	comment (80 chars)
 
-unsigned little-endian short:	"v":	count					
-unsigned char						"C":	species name length	
+unsigned little-endian short:	"v":		count
+unsigned char						"C":		species name length
 SPACE-padded string				"A36":	species name (36 chars)
-unsigned char						"C":	place name length	
+unsigned char						"C":		place name length
 SPACE-padded string				"A30":	place name (30 chars)
-SPACE-padded string				"A4":	"END!"
+SPACE-padded string				"A4":		"END!"
 */
 	function toStream()
 	{
