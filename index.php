@@ -35,13 +35,13 @@ if (isset($_POST['locButton']))
 	if (!empty($errormsg))
 		$posted = false;
 	else
-	{	// echo "POST: "; print_r($_POST); die;
-		$success = generate_stream();
+	{
+		$errormsg = generate_stream();
 		logger();
-		if ($success)
-			exit;
-		else 
+		if (!empty($errormsg))
 			$posted = false;
+		else
+			exit;
 	}
 }
 

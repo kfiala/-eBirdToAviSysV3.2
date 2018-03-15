@@ -1,13 +1,14 @@
 <?php
 function generate_stream()
 {
-	global $myself;
+	global $myself, $maskList;
 /*
 echo '<pre>';
 //echo "SESSION: "; print_r($_SESSION);
 echo "POST: "; print_r($_POST);
 echo "</pre>\n";
 */
+	$errormsg = array();
 
 	$notes = array();
 
@@ -28,9 +29,15 @@ echo "</pre>\n";
 
 	for ($i=0; $i<$nsites; $i++)
 	{
+		$ccode[$i] = strtoupper($ccode[$i]);
 		$locationData[$location[$i]] = 
-			new eBirdLocation($location[$i],$place[$i],$place_level[$i],strtoupper($ccode[$i]),$glocom[$i]);
+			new eBirdLocation($location[$i],$place[$i],$place_level[$i],$ccode[$i],$glocom[$i]);
+		if (!isset($maskList[$ccode[$i]]))
+			$errormsg[] = "{$ccode[$i]} is not a valid country code (place {$place[$i]})";
 	}
+
+	if (!empty($errormsg))
+		return $errormsg;
 
 	for ($w=0; $w<count($_SESSION['eBird']['file']); $w++)
 	{
@@ -131,9 +138,12 @@ echo "</pre>\n";
 		}
 		else
 		{
-			return false;
+			$errormsg[] = "Unable to open file $workname.csv";
 		}
 	}
+
+	if (!empty($errormsg))
+		return $errormsg;
 
 /*
 echo "<pre>locationData:\n";
@@ -189,6 +199,6 @@ echo "</pre>\n";
 	}
 	cleanWork();
 	unlink($str_file);
-	return true;
+	return $errormsg;	// $errormsg will be empty here
 }
 ?>
