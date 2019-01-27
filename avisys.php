@@ -165,22 +165,22 @@ class FieldNote
 
 	function __construct($comment)
 	{
-	   $file = dirname(__FILE__).'/incoming/fncounter.txt';
-   	$fp = fopen($file,"r");
-	   if (flock($fp, LOCK_EX))
-   	{
-      	$counter = (int)fgets($fp);
-	      fclose($fp);
+		$file = dirname(__FILE__).'/incoming/fncounter.txt';
+		$fp = fopen($file,"r");
+		if (flock($fp, LOCK_EX))
+		{
+			$counter = (int)fgets($fp);
+			fclose($fp);
 			if ($counter < 2147483647)
 				$counter++;
 			else
 				$counter = 0;
-	      $fp = fopen($file,"w");
-   	   fwrite($fp,"$counter\n");
-      	fflush($fp);            // flush output before releasing the lock
-	      flock($fp, LOCK_UN);    // release the lock
-   	}
-	   fclose($fp);
+			$fp = fopen($file,"w");
+			fwrite($fp,"$counter\n");
+			fflush($fp);            // flush output before releasing the lock
+			flock($fp, LOCK_UN);    // release the lock
+		}
+		fclose($fp);
 
 		$this->id = $counter;
 		$this->comment = $comment;
