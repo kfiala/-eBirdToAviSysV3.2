@@ -1,20 +1,15 @@
 <?php
 function generate_stream()
 {
-	global $myself, $maskList;
-/*
-echo '<pre>';
-//echo "SESSION: "; print_r($_SESSION);
-echo "POST: "; print_r($_POST);
-echo "</pre>\n";
-*/
+	global $myself, $maskList, $speciesLookup;
+
 	$errormsg = array();
 
 	$notes = array();
 
 	$locationData = array();
 
-	$incoming = dirname(__FILE__) . "/incoming";
+	$checklists = $_SESSION[APPNAME]['checklists'];
 
 	$place = $_POST['place'];
 	$location = $_POST['location'];
@@ -25,7 +20,6 @@ echo "</pre>\n";
 	$merged = $_POST['merged'];
 
 	$stream = array();
-	ini_set("auto_detect_line_endings", "1"); // mac compatibility
 
 	for ($i=0; $i<$nsites; $i++)
 	{
@@ -39,118 +33,66 @@ echo "</pre>\n";
 	if (!empty($errormsg))
 		return $errormsg;
 
-	for ($w=0; $w<count($_SESSION['eBird']['file']); $w++)
+	foreach ($checklists as $checklist)
 	{
-		$workname = $_SESSION['eBird']['file'][$w];
-		$workfile = "$incoming/$workname.csv";
-		$fh = @fopen($workfile,"r");
-		if ($fh)
-		{
-			$headings = fgetcsv ( $fh );
-			for ($h=0; $h<count($headings); $h++)
-			{
-				$head = strtolower($headings[$h]);
-				switch ($head)
-				{
-					case "common name":
-					case "species":	$species_column = $h; break;
-					case "count":		$count_column = $h; break;
-					case "location":	$location_column = $h; break;
-					case "date":
-					case "observation date":	$date_column = $h; break;
-					case "species comments":
-					case "comments":	$comments_column = $h; break;
-					case "country":
-					case "state/province":
-					case "s/p":			$country_column = $h; break;
+		$locationName = validUTF8($checklist->location);
 
-					case "time":
-					case "start time":	$time_column = $h; break;
-
-					case "county":			$county_column = $h; break;
-					default:
-				}
-			}
-			if (!isset($species_column) || !isset($count_column) || !isset($location_column)
-				|| !isset($date_column) /* || !isset($comments_column) */ )
-				die("File is not in expected format");
-			while (($sighting = fgetcsv($fh)) !== FALSE)
-			{
-				$locationName = $sighting[$location_column];
-
-				if (isset($country_column))
-				{
-					$stateProv = $sighting[$country_column];
-					$locationName .= " $stateProv";
-					if (isset($county_column))
-					{
-						$county = $sighting[$county_column];
-						if ($county)
-							$locationName .= " $county";
-					}
-				}
-
-				$locationName = validUTF8($locationName);
-				if ($merged)
-					$locationIndex = $locationName;
-				else
-					$locationIndex = $locationName . $sighting[$date_column].$sighting[$time_column];
-				$location = $locationData[$locationIndex];
-
-				if	(isset($comments_column) && isset($sighting[$comments_column]))
-					$comments = $sighting[$comments_column];
-				else $comments = "";
-				if ($location->comment)
-					$comments = "$location->comment $comments";
-				if (strlen($comments) > 80)
-				{
-					$fn = new FieldNote($comments);
-					$notes[] = $fn;
-					$fnid = $fn->id;
-				}
-				else $fnid = 0;
-
-				$species = $sighting[$species_column];
-				$lparen = strpos($species,'(',0);
-				if ($lparen)
-				{
-					$qualifier = trim(substr($species,$lparen));
-					$species = trim(substr($species,0,$lparen));
-					$comments = "$qualifier $comments";
-				}
-
-				$number = $sighting[$count_column];
-				if ($number == "X")
-					$number = 1;
-
-				$stream[] = new StreamEntry($species,
-					$sighting[$date_column],
-					$location->AviSys,
-					$location->level,
-					$number,
-					$location->country,
-					$comments,
-					$fnid
-					);
-			}
-
-			fclose($fh);
-		}
+		if ($merged)
+			$locationIndex = $locationName;
 		else
+			$locationIndex = $locationName . $checklist->startTime;
+		$location = $locationData[$locationIndex];
+
+		foreach ($checklist->obs as $sighting)
 		{
-			$errormsg[] = "Unable to open file $workname.csv";
+			if (isset($sighting->comments))
+				$comments = $sighting->comments;
+			else
+				$comments = '';
+			if ($location->comment)
+				$comments = "$location->comment $comments";
+			if (strlen($comments) > 80)
+			{
+				$fn = new FieldNote($comments);
+				$notes[] = $fn;
+				$fnid = $fn->id;
+			}
+			else $fnid = 0;
+
+			$species = $speciesLookup[$sighting->speciesCode];
+			$lparen = strpos($species,'(',0);
+			if ($lparen)
+			{
+				$qualifier = trim(substr($species,$lparen));
+				$species = trim(substr($species,0,$lparen));
+				$comments = "$qualifier $comments";
+			}
+
+			$number = $sighting->howManyStr;
+			if ($number == "X")
+				$number = 1;
+
+			$stream[] = new StreamEntry($species,
+				$checklist->obsDt,
+				$location->AviSys,
+				$location->level,
+				$number,
+				$location->country,
+				$comments,
+				$fnid
+				);
 		}
+
 	}
 
 	if (!empty($errormsg))
 		return $errormsg;
 
-/*
-echo "<pre>locationData:\n";
-//echo "SESSION: "; print_r($_SESSION);
-print_r($locationData);
-echo "</pre>\n";
-*/
+	$streamfile = 'eBird_AviSys';
+
+	$incoming = dirname(__FILE__) . "/incoming";
+
+	$workname = session_id();
 
 	$str_file = "$incoming/$workname.str";
 	$handle = fopen($str_file,"w");
@@ -158,11 +100,6 @@ echo "</pre>\n";
 		fwrite($handle,$data->toStream());
 	fclose($handle);
 
-// If uploading one file, use same filename for stream file. If multiple uploads, name the stream file AviSys.
-	if (count($_SESSION['eBird']['file']) == 1)
-		$streamfile = $_SESSION['eBird']['file'][0];
-	else
-		$streamfile = 'AviSys';
 
 	if (count($notes))
 	{
@@ -172,7 +109,7 @@ echo "</pre>\n";
 			fwrite($handle,$data->toStream());
 		fclose($handle);
 		$zip = new ZipArchive();
-		$zipfile = "$incoming/$streamfile.zip";
+		$zipfile = "$incoming/$workname.zip";
 		if ($zip->open($zipfile,ZipArchive::CREATE) !== TRUE)
 			die("cannot open $zipfile");
 		$zip->addFile($str_file,"$streamfile.str");
@@ -197,7 +134,7 @@ echo "</pre>\n";
 		header('Content-Disposition: attachment; filename="'.$streamfile.'.str"');
 		readfile($str_file);
 	}
-	cleanWork();
+//	cleanWork();
 	unlink($str_file);
 	return $errormsg;	// $errormsg will be empty here
 }

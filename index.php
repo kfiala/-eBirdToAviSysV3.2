@@ -1,15 +1,23 @@
 <?php
 require_once './avisys.php';
+require_once './CheckList.php';
 session_start();
-require_once './upload_form.php';
-require_once './upload_files.php';
+require_once './getTaxonomy.php';
+require_once './getLocation.php';
+require_once 'input_form.php';
+require_once './fetch_checklists.php';
 require_once './generate_stream.php';
+require_once './curlCall.php';
 require_once './utilities.php';
+
+const APPNAME = 'ebirdtoavisys';
+
+$speciesLookup = getTaxonomy();
 
 // Global variables.
 $myself = $_SERVER['REQUEST_URI'];
-if (!isset($_SESSION['eBird']['REFERER']))
-	$_SESSION['eBird']['REFERER'] = (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
+if (!isset($_SESSION[APPNAME]['REFERER']))
+	$_SESSION[APPNAME]['REFERER'] = (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
 $posted = ($_SERVER["REQUEST_METHOD"]=="POST");
 if ($posted && isset($_POST['cancelButton']))
 	$posted = false;
@@ -105,15 +113,16 @@ if (!$posted)
 	{
 		foreach($errormsg as $emsg)
 			printError($emsg);
-		cleanWork();
+//		cleanWork();
 	}
-	upload_form();
+	input_form();
 }
 else 
 {
-	$success = upload_files();
+//	$success = upload_files();
+	$success = fetch_checklists();
 	if (!$success)
-		upload_form();
+		input_form();
 }
 
 // likebutton();

@@ -1,45 +1,45 @@
 <?php
-function upload_form()
+function input_form()
 {
 	global $myself;
-
-	$max_file_uploads = ini_get('max_file_uploads');
-	if ($max_file_uploads)
-		$upload_max = "(up to $max_file_uploads)";
-	else
-	{
-		$upload_max = "";
-		$max_file_uploads = 0;	// no limit
-	}
-
-	$heredoc = <<<HEREDOC
+?>
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.info/update/">2018 Taxonomy Update for AviSys</a>.
 </p>
-<form enctype="multipart/form-data" method="POST" action="$myself" name="upform">
+
+
+
+<form method="POST" action="<?php echo $myself;?>" name="upform">
 <fieldset style="max-width:40em;float:left;">
-<legend>File upload</legend>
+<legend>Checklist input</legend>
+
+
 <div id=buttons>
-<label class="input" for="file0">Select one or more $upload_max eBird csv files to be converted for AviSys, then click "Upload".</label>
-<br>
-<input class="upload" id="file0" name="fileupload[0]" type="file"  style="width:35em" onclick="document.getElementById('uplbutn').style.display = 'block';filebutton(1,$max_file_uploads);return true;"/>
-</div>
-HEREDOC;
-	echo $heredoc,PHP_EOL;
+<textarea id="maininput" name="checklists" cols="65" rows="6">
+<?php
+	if (isset($_SESSION[APPNAME]['rawInput']))
+		echo $_SESSION[APPNAME]['rawInput'];
 ?>
-<div class="conspicuous">
-<p id="patience" style="display:none;text-align:center">Uploading... be patient</p>
+</textarea>
 </div>
 
-<div id=uplbutn style="display:block">
-<hr style="width:75%" />
-<input type="submit" style="width:5.5em;" value="Upload" name="uploadButton"
-	onclick="document.getElementById('patience').style.display = 'block'; return true;">
-Click to upload the selected checklist(s).
+
+
+
+
+
+
+<div class="conspicuous">
+<p id="patience" style="display:none;text-align:center">Fetching checklists from eBird... be patient</p>
 </div>
-<script>
-document.getElementById('uplbutn').style.display = 'none';
-</script>
+
+
+
+<input type="submit" style="width:5.5em;" value="Go!" name="uploadButton"
+	onclick="document.getElementById('patience').style.display = 'block'; return true;">
+Click to use the selected checklist(s).
+
+
 </fieldset>
 
 <fieldset style="float: left">
@@ -57,7 +57,7 @@ document.getElementById('uplbutn').style.display = 'none';
 <h2>What it is</h2>
 <?php
 	$heredoc = <<<HEREDOC
-<p>eBird to AviSys checklist import will convert one or more $upload_max eBird checklist files (in csv format) into an AviSys stream file 
+<p>eBird to AviSys checklist import will convert one or more eBird checklists files into an AviSys stream file 
 with which you can import the data into AviSys (Version 6).</p>
 HEREDOC;
 	echo $heredoc,PHP_EOL;
