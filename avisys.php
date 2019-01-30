@@ -6,12 +6,13 @@ class eBirdLocation
 	var $eBird, $AviSys, $level, $country, $comment;
 	var $date,$startTime,$duration,$distance;
 
-	function __construct($eBirdName, $AviSysName, $level, $country, $comment="")
+	function __construct($eBirdName, $AviSysName, $level, $country, $state, $comment="")
 	{
 		$this->eBird = $eBirdName;
 		$this->AviSys = $AviSysName;
 		$this->level = $level;
 		$this->country = $country;
+		$this->state = $state;
 		$this->comment = $comment;
 	}
 
@@ -26,10 +27,10 @@ class eBirdLocation
 
 class StreamEntry
 {
-	var $species_code, $field_note, $dec_date, $place_level, $country_code, $continentMask;
+	var $species_code, $field_note, $dec_date, $place_level, $country_code, $state_code, $continentMask;
 	var $comment, $species_name, $place, $count;
 
-	function __construct($species_name, $date, $place, $place_level, $count=1, $country_code="US", $comment="", $field_note=0)
+	function __construct($species_name, $date, $place, $place_level, $count=1, $country_code="US", $state_code = '', $comment="", $field_note=0)
 	{
 		global $maskList;
 
@@ -48,10 +49,16 @@ class StreamEntry
 		$this->count = trim($count);
 
 		$country_code = strtoupper(trim($country_code));
-		if ($country_code == 'US-AK')	// Special cases for Alaska and Hawaii
-			$country_code = 'AK';
-		if ($country_code == 'US-HI')
-			$country_code = 'HI';
+		$state_code = strtoupper(trim($state_code));
+		if ($country_code == 'US')
+		{
+			if ($state_code == 'AK')
+				$country_code = 'AK';	// Special case for Alaska
+			if ($state_code == 'HI')
+				$country_code = 'UH';	// Special case for Hawaii
+		}
+
+
 		if (strlen($country_code) > 3)
 			$country_code = substr(trim($country_code),0,3);	// 3 not 2 in case it is 'RSW' or 'RSE'
 		$country_code = rtrim($country_code,'-');				// In case, e.g., US-NC was reduced to US-
@@ -65,7 +72,7 @@ class StreamEntry
 		if (isset($maskList[$country_code]))
 		{
 			$this->continentMask = $maskList[$country_code];
-			if ($country_code == 'AK' || $country_code == 'HI')
+			if ($country_code == 'AK')
 				$this->country_code = 'US';
 			else if ($country_code == 'RSW' || $country_code == 'RSE')
 				$this->country_code = 'RS';
@@ -165,7 +172,7 @@ class FieldNote
 
 	function __construct($comment)
 	{
-		$file = dirname(__FILE__).'/incoming/fncounter.txt';
+		$file = dirname(__FILE__).'/tempdir/fncounter.txt';
 		$fp = fopen($file,"r");
 		if (flock($fp, LOCK_EX))
 		{

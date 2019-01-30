@@ -7,6 +7,11 @@ function input_form()
 To be current with eBird, install the <a href="http://avisys.info/update/">2018 Taxonomy Update for AviSys</a>.
 </p>
 
+<div>
+<p style="color:blue">
+	<strong>New version! You no longer have to download your checklists; they are automatically retrieved directly from eBird!</strong>
+</p>
+</div>
 
 
 <form method="POST" action="<?php echo $myself;?>" name="upform">
@@ -53,6 +58,11 @@ Click to use the selected checklist(s).
 <script>function sumHI(){document.getElementById('summarize').style.color='red';}</script>
 </fieldset>
 </form>
+<div style="display:inline-block;border:thin solid black;float:left;margin-left: 2em;padding:0 1em;width:15em">
+	<p>Do you need to upload CSV files? If so, you will need use
+		eBird to AviSys checklist import (Version 1).
+		<a href="../ebirdtoavisysV1/">Click here</a></p>
+</div>
 <br style="clear: both">
 <h2>What it is</h2>
 <?php
@@ -64,12 +74,24 @@ HEREDOC;
 ?>
 <h2>What you do</h2>
 <ol>
-<li>Download an eBird checklist (by going to My eBird->Manage My Observations->View or edit->Download).
-Save the csv file on your computer.</li>
-<li>In the &ldquo;File upload&rdquo; form above, select the downloaded checklist file and click &ldquo;Upload&rdquo;.
-You can upload multiple eBird checklists in one batch. 
-Each time you select a file, a new button for selecting another file is added.
-When you've selected your last file, click &ldquo;Upload&rdquo;.
+<li>In the &ldquo;File upload&rdquo; form above, list one or more checklist names and click &ldquo;Go!&rdquo;.
+	eBird to AviSys checklist import (Version 2) will fetch the checklists directly from eBird;
+	you no longer need to download them.
+<p>	
+Let's say you have a checklist https://ebird.org/view/checklist/S00000000. You can copy-and-paste just the "S00000000",
+or you can copy-and-paste the whole "https://ebird.org/view/checklist/S00000000".
+If you enter multiple checklists, enter them on separate lines, or else just separate them with spaces or commas.
+For example you could enter<br>
+	<kbd>
+	S00000000<br>
+	S00000001<br>
+	S00000002<br>
+	</kbd><br>
+	or
+	<kbd>S00000000, S00000001, S00000002</kbd><br>
+	or<br>
+	<kbd>S00000000 S00000001 S00000002</kbd><br>
+</p>
 </li>
 <li>On the next screen that you see, each eBird location that is in your input will be displayed.
 If the corresponding AviSys place has a different name, you can enter the correct AviSys place name.
@@ -84,32 +106,30 @@ Then click the &ldquo;Do it!&rdquo; button that you will see.
 <p>
 If AviSys does not recognize a species name while importing a stream file, 
 it will skip that sighting record. (It will tell you!)
-You might want to edit the csv file before uploading it, to make sure that all species names 
-that will go into the stream file
-are ones that will be recognized by AviSys.
-Important: if you edit the file in Excel, be sure to save it back in csv format, not as an xls or xlsx file!
+You will need to be sure that you have AviSys up-to-date with current taxonomy.
 </p>
 <p>One prominent difference between eBird names and AviSys names is that eBird accepts certain names
 with parenthetic qualifiers, e.g., &ldquo;Northern Flicker (Yellow-shafted)&rdquo;.
 You don't need to worry about these cases!
 eBird to AviSys checklist import will remove the parenthetic part of the name and insert it at the beginning of the AviSys comment.</p>
-<p>Another difference is that eBird allows &ldquo;sp&rdquo; entries.
-You can either delete these before importing, or just let AviSys ignore them.
+<p>Another difference is that eBird allows &ldquo;sp&rdquo; or &ldquo;slash&rdquo; entries (e.g. Downy/Hairy Woodpecker).
+AviSys ignores these.
 </p>
-<p>Finally, there might be some real differences between the nomenclature of eBird and AviSys, depending on timing of updates, etc.
-If you know about any such differences in advance, you can alter names in your csv file before uploading.
-Otherwise, AviSys will skip the unrecognized name during the import,
-and you will need to enter the record manually, using the name that AviSys recognizes.</p>
+
+<h2>Warning about system-hidden checklists</h2>
+<p>A checklist that is flagged for some reason with a comment similar to 
+&ldquo;This checklist and its observations do not appear in public eBird outputs&rdquo;
+cannot be imported with this version. You will need to use
+<a href="../ebirdtoavisysV1/">Version 1</a></p>
+
 <h2>Can I import from other sources?</h2>
-<p>You should be able to import any validly formatted csv file that contains at least four columns headed
-"species", "count", "location", and "date" or "observation date", and optionally a "comments" column and/or a "country" column. 
-The order of columns and presence of other columns does not matter.
-The date can be in most any recognizable format.</p>
+<p>Yes, but not with this version of eBird to AviSys checklist import. You will need to use
+<a href="../ebirdtoavisysV1/">Version 1</a> which supports csv files.</p>
 <h3>What about eBird's &ldquo;Download My Data&rdquo;?</h3>
 eBird provides a feature to <a href="http://ebird.org/ebird/downloadMyData" target="_blank">download all of your eBird data</a> in one file.
 eBird to AviSys checklist import will process that file too!
-However, if you are going to import a large amount of data all at once, you really should set up a test data set in AviSys 
-and do a dry run of importing the data there before you commit to importing it to your real AviSys database.
+But again, you will need to use <a href="../ebirdtoavisysV1/">Version 1</a>.
+
 <h3>What's a stream file?</h3>
 <p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
 
@@ -132,10 +152,6 @@ that you can recognize it.
 </p><p>
 Whichever type of summary you choose, the generated stream file will be
 the same, except for anything that you enter in the Global comment field.
-</p><p>
-"Summarize by checklist" requires that the csv file has columns headed
-"Start time", "Duration", and "Distance".
-Checklists downloaded directly from eBird meet this requirement.
 </p>
 
 

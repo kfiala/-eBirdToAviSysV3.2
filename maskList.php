@@ -1,7 +1,7 @@
 <?php
 $maskList = array(
 	'AK' => '0005200800',	/* Special case: Alaska */
-	'HI' => '0004140000',	/* Special case: Hawaii */
+	'UH' => '0004140000',	/* Special case: Hawaii */
 	'US' => '000D200800',	/* Special case: 48 states */
 	'GL' => '0000300000',
 	'PM' => '0001200800',

@@ -1,4 +1,4 @@
-/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, country_fill, qc */
+/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, qc */
 
 function lookupPlace(i) {
 	'use strict';
@@ -59,31 +59,6 @@ document.getElementById('donemsg').style.display='inline';
 document.getElementById('advice').style.display='none';
 }
 
-function filebutton(i,limit)
-{	/* Add another upload button. */
-	'use strict';
-	var ip1=i+1;
-	var dv = document.createElement("div");
-	var im1 = i-1;
-	/* Only allow onclick to fire once; then remove it. */
-	var myButton = document.getElementById("file"+im1);
-	myButton.removeAttribute("onclick");
-
-	dv.setAttribute("id", "d"+i);
-	dv.style.display = "block";
-	if (!limit || ip1 < limit)
-		{
-		dv.innerHTML='<label class="input" for="file'+i+'">Checklist '+ip1+':</label><br><input class="upload" id="file'+i+'" name="fileupload['+i+']" type="file" style="width:35em" onclick="filebutton('+ip1+','+limit+');return true;"/><br>';
-		}
-	else
-		{
-		dv.innerHTML='<label class="input" for="file'+i+'">Checklist '+ip1+':</label><br><input class="upload" id="file'+i+'" name="fileupload['+i+']" type="file" style="width:35em"/><br>';
-		}
-	var element = document.getElementById("buttons");
-	element.appendChild(dv);
-	return;
-}
-
 function checkType()
 {
 	'use strict';
@@ -114,24 +89,6 @@ function validated()
 		i++;
 	} while (i < 1000);
 
-	i = 0;
-	do
-	{	/* Check that all country codes have a value. */
-		id = "ccode" + i;
-		var cy = document.getElementById(id);		
-		if (!cy) {break;}
-		id = "cntrywarn[" + i + "]";
-		if (cy.value.trim() === "")
-		{
-			document.getElementById(id).style.display='inline';
-			allok = false;
-		}
-		else {
-			document.getElementById(id).style.display='none';
-		}
-		i++;
-	} while (i < 1000);
-
 	if (allok)
 	{
 		clearPage();
@@ -144,15 +101,6 @@ function place_sel(i)
 {	/* Clear the warning message when a place type is selected. */
 	'use strict';
 	var id = "placewarn[" + i + "]";
-	document.getElementById(id).style.display='none';
-	savePlace(i);
-	return;
-}
-
-function country_fill(i)
-{	/* Clear the warning message when a country code is entered. */
-	'use strict';
-	var id = "cntrywarn[" + i + "]";
 	document.getElementById(id).style.display='none';
 	savePlace(i);
 	return;

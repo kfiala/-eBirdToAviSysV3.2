@@ -4,12 +4,6 @@ For each place you must also specify whether it is an AviSys
 &ldquo;Site&rdquo;, &ldquo;City&rdquo;, &ldquo;County&rdquo;, &ldquo;State&rdquo;, or &ldquo;Nation&rdquo;.
 This is because you could easily have, say, a city, county, and state place with the same name,
 and AviSys needs to know which one to use.
-Also, you need to enter the two-letter country code, e.g., &ldquo;US&rdquo; for United States.
-<span style="display:inline-block;border:medium red solid;padding:0 5px">International birders take note:</span>
-The &ldquo;Country code&rdquo; is automatically pre-filled as &ldquo;US&rdquo;, meaning &ldquo;United States&rdquo;.
-If your observations are from a different country, you must change US to the correct two-letter country code;
-you must use the code that AviSys uses. 
-See &ldquo;More about country codes&rdquo; below.
 </p>
 <p>If you have some information, maybe AviSys attribute codes or keywords, that you want inserted at the beginning
 of each comment for a location, enter it as the &ldquo;Global comment&rdquo;.
@@ -28,26 +22,5 @@ You can either save the .zip file to your computer, or open it in your browser,
 but either way you need to unzip the two files and save them to your computer.
 When you tell AviSys to process the .str file, it will automatically also process the .fnr file that has the same filename.
 </p>
-<p>The server deletes your uploaded file after reading it,
-so if you get an error on this page,
-you will need to upload it again.</p>
-<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
-<h2>More about country codes</h2>
-<p>If you are not sure what the correct country code is for a Place, 
-do &ldquo;List Records&rdquo; for some species that you have seen in that country.
-The two-letter country code is displayed just to the left of the date.
-</p>
-<p style="border:medium red solid;padding:0 5px">Special case:
-If you have observations from Alaska or Hawaii, please enter a country code of AK for Alaska or HI for Hawaii.
-This will allow your data to be correctly classified for the purpose of running reports for the continent-level places
-North America, [ABA Area], [Lower 48], [US], [AOU], [Oceanic] and Pacific Ocean.
-After this classification is made, the application will change the country code to US before writing the output file.
-</p>
-<p>If you have data with erroneous country codes, AviSys will not produce correct reports by country or continent,
-although reports by state, county, city, or site will work OK.</p>
-<p>If you discover that you have entered data with an incorrect country code, here is how to fix it.
-First, under the Utilities menu, click &ldquo;Certify Data Set Quality&rdquo;.
-Click &ldquo;OK&rdquo; for the first few prompts.
-Then, when it prompts you &ldquo;Would you now like to scan your sightings for proper Nation/Continent codes?&rdquo;
-click &ldquo;Yes&rdquo; and then &ldquo;Start&rdquo;. This process will fix any incorrect country codes.
-</p>
+
+<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p

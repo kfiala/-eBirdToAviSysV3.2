@@ -76,7 +76,7 @@ if (isset($_POST['locButton']))
    </head>
 
 <body>
-<h1>eBird to AviSys checklist import</h1>
+<h1>eBird to AviSys checklist import (Version 2)</h1>
 
 <noscript>
 <p><span class=error>
@@ -88,45 +88,21 @@ See <a href="http://enable-javascript.com/" target="_blank">How to enable JavaSc
 </noscript>
 
 <?php
-/*
-echo "<pre>\n";
-echo "SESSION: "; print_r($_SESSION);
-echo "POST: "; print_r($_POST);
-echo "FILES: "; print_r($_FILES);
-//print_r($_SERVER);
-echo "</pre>\n";
-*/
-
-// include dirname(dirname($_SERVER["SCRIPT_FILENAME"])) . '/txt/fbjdk.php'; 
-
-if (empty($_POST) && empty($_FILES) && isset($_SERVER['CONTENT_LENGTH']))
-{
-	$length = $_SERVER['CONTENT_LENGTH'];
-	$maxup = ini_get('post_max_size');
-   echo "<p>Sorry, your upload is too large. It is $length bytes and the limit is $maxup.</p>";
-	$posted = false;
-}
-
 if (!$posted)
 {
 	if (!empty($errormsg) || isset($_POST['cancelButton']))
 	{
 		foreach($errormsg as $emsg)
 			printError($emsg);
-//		cleanWork();
 	}
 	input_form();
 }
 else 
 {
-//	$success = upload_files();
 	$success = fetch_checklists();
 	if (!$success)
 		input_form();
 }
-
-// likebutton();
 ?>
-
 </body>
 </html>

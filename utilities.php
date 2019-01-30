@@ -11,7 +11,7 @@ function logger()
 		$logmsg .= $_SERVER["HTTP_USER_AGENT"];
 	$logmsg .= "\n";
 
-	$logfile = "incoming/logfile.txt";
+	$logfile = "tempdir/logfile.txt";
 
 	$fh = @fopen($logfile,"ab");
 	if ($fh)

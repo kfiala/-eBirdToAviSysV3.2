@@ -28,7 +28,6 @@ function fetch_checklists()
 		else
 			$submissionIDs[$i] = substr($input,$lastslash+1);
 	}
-	echo '<pre>';print_r($submissionIDs);echo '</pre>';
 
 	$viewURL = 'https://ebird.org/ws2.0/product/checklist/view/';
 	foreach ($submissionIDs as $submissionID)
@@ -51,7 +50,7 @@ function fetch_checklists()
 			exit;
 		}
 
-		echo $checklistObject;
+//		echo $checklistObject;
 
 		if (isset($obj->errors))
 		{
@@ -74,16 +73,14 @@ function fetch_checklists()
 	foreach($checklists as $checklist)
 	{
 		$location = validUTF8($checklist->location);
-		$country = explode('-',$checklist->subnational1Code)[0];
 
 		$Avplace = $location;
 		$Avlevel = " ";
-		$Avcountry = $country;
 
 		$locationIndex = $merged ? $location : $location . $checklist->startTime;
 		if (!isset($locations[$locationIndex]))
 		{
-			$locations[$locationIndex] = new eBirdLocation($location,$Avplace,$Avlevel,$Avcountry);
+			$locations[$locationIndex] = new eBirdLocation($location,$Avplace,$Avlevel,$checklist->country,$checklist->state);
 //			if (!$merged)
 //				$locations[$locationIndex]->addTimeEffort($date,$startTime,$duration,$distance);
 		}
@@ -128,7 +125,8 @@ HEREDOC;
 		$eBird = htmlspecialchars($ebirdloc->eBird);
 		$AviSys = htmlspecialchars($ebirdloc->AviSys);
 		$levtype = htmlspecialchars($ebirdloc->level);
-		$country = htmlspecialchars(substr($ebirdloc->country,0,2));
+		$country = htmlspecialchars($ebirdloc->country);
+		$state = htmlspecialchars($ebirdloc->state);
 
 		if (!$merged)
 		{
@@ -163,9 +161,10 @@ HEREDOC;
 <option value="Nation" $nationselected>Nation</option>
 </select></label>
 
-<label style="margin-left:1em">Country code:<input name="ccode[$i]" id="ccode$i" type="text" value="$country" style="width:2em" maxlength="3" onblur="country_fill($i)"></label>
+<input type="hidden" name="ccode[$i]" value="$country">
+<input type="hidden" name="scode[$i]" value="$state">
+
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
-<span id=cntrywarn[$i] class="error" style="display:none;margin-left:28em">Please fill in the country code (e.g., US)</span>
 <span class="error" id="toolong$i"></span><br>
 $timeEffort
 <label>Global comment:

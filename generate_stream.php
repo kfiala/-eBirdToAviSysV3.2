@@ -15,6 +15,7 @@ function generate_stream()
 	$location = $_POST['location'];
 	$place_level = $_POST['place_level'];
 	$ccode = $_POST['ccode'];
+	$scode = $_POST['scode'];
 	$glocom = $_POST['glocom'];
 	$nsites = min(count($place),count($location),count($place_level),count($ccode),count($glocom));
 	$merged = $_POST['merged'];
@@ -25,7 +26,7 @@ function generate_stream()
 	{
 		$ccode[$i] = strtoupper($ccode[$i]);
 		$locationData[$location[$i]] = 
-			new eBirdLocation($location[$i],$place[$i],$place_level[$i],$ccode[$i],$glocom[$i]);
+			new eBirdLocation($location[$i],$place[$i],$place_level[$i],$ccode[$i],$scode[$i],$glocom[$i]);
 		if (!isset($maskList[$ccode[$i]]))
 			$errormsg[] = "{$ccode[$i]} is not a valid country code (place {$place[$i]})";
 	}
@@ -77,7 +78,8 @@ function generate_stream()
 				$location->AviSys,
 				$location->level,
 				$number,
-				$location->country,
+				$location->country, 
+				$location->state,
 				$comments,
 				$fnid
 				);
@@ -90,11 +92,11 @@ function generate_stream()
 
 	$streamfile = 'eBird_AviSys';
 
-	$incoming = dirname(__FILE__) . "/incoming";
+	$tempdir = dirname(__FILE__) . "/tempdir";
 
 	$workname = session_id();
 
-	$str_file = "$incoming/$workname.str";
+	$str_file = "$tempdir/$workname.str";
 	$handle = fopen($str_file,"w");
 	foreach(	$stream as $data )
 		fwrite($handle,$data->toStream());
@@ -103,13 +105,13 @@ function generate_stream()
 
 	if (count($notes))
 	{
-		$notes_file = "$incoming/$workname.fnr";
+		$notes_file = "$tempdir/$workname.fnr";
 		$handle = fopen($notes_file,"wb");
 		foreach( $notes as $data )
 			fwrite($handle,$data->toStream());
 		fclose($handle);
 		$zip = new ZipArchive();
-		$zipfile = "$incoming/$workname.zip";
+		$zipfile = "$tempdir/$workname.zip";
 		if ($zip->open($zipfile,ZipArchive::CREATE) !== TRUE)
 			die("cannot open $zipfile");
 		$zip->addFile($str_file,"$streamfile.str");

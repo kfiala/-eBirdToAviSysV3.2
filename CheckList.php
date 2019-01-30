@@ -19,6 +19,9 @@ class CheckList
 		}
 		$this->location = getLocation($this->locId);
 
+		$geo = explode('-',$cornell->subnational1Code);
+		$this->country = $geo[0];
+		$this->state = $geo[1];
 
 		if (isset($this->effortDistanceKm) && $this->effortDistanceKm != '')
 		{
@@ -28,7 +31,14 @@ class CheckList
 			else
 				$distance = "$km km";	
 		}
-		$this->startTime = $this->obsDt . ' - ' . $this->durationHrs . ' hours';
+		$this->startTime = $this->obsDt;
+		if (isset($this->durationHrs))
+		{
+			$hours = intval($this->durationHrs);
+			$minutes = floor(($this->durationHrs - $hours) * 60);
+			$this->startTime .= " - $hours hours, $minutes minutes";
+		}
+		
 		$this->effort = $this->startTime;
 		if (isset($distance))
 			$this->effort .=  " - $distance";
@@ -38,7 +48,8 @@ class CheckList
 	function __toString()
 	{
 		global $speciesLookup;
-		$heading = "Checklist for $this->location (".explode('-',$this->subnational1Code)[0].") on $this->effort";
+		$checklist = array();
+		$heading = "Checklist for $this->location (".$this->country.") on $this->effort";
 		foreach($this->obs as $observationObject)
 		{
 			$observation = get_object_vars($observationObject);
@@ -48,6 +59,8 @@ class CheckList
 				$line .= ', ' . $observation['comments'];
 			$checklist[] = $line;
 		}
+		if (empty($checklist))
+			 return "$heading -- no observations in this checklist!";
 		return "$heading<br>" . implode('<br>',$checklist).'<br>';
 	}
 }
