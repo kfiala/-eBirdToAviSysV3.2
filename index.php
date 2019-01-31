@@ -18,15 +18,12 @@ $speciesLookup = getTaxonomy();
 $myself = $_SERVER['REQUEST_URI'];
 if (!isset($_SESSION[APPNAME]['REFERER']))
 	$_SESSION[APPNAME]['REFERER'] = (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
-$posted = ($_SERVER["REQUEST_METHOD"]=="POST");
-if ($posted && isset($_POST['cancelButton']))
-	$posted = false;
+
 $errormsg = array();
 /* Quick exit with download */
 if (isset($_POST['locButton']))
 {
 	$place_level = isset($_POST['place_level']) ? $_POST['place_level'] : "";
-	$country = isset($_POST['ccode']) ? $_POST['ccode'] : "";
 
 	$noplace = false;
 	foreach ($place_level as $pl)
@@ -34,21 +31,11 @@ if (isset($_POST['locButton']))
 	if ($noplace)
 		$errormsg[] = "Error: You must set the AviSys place type.";
 
-	$nocountry = false;
-	foreach ($country as $cc)
-		if (!$cc) $nocountry = true;
-	if ($nocountry)
-		$errormsg[] = "Error: You must set the country code.";
-
-	if (!empty($errormsg))
-		$posted = false;
-	else
+	if (empty($errormsg))
 	{
 		$errormsg = generate_stream();
 		logger();
-		if (!empty($errormsg))
-			$posted = false;
-		else
+		if (empty($errormsg))
 			exit;
 	}
 }
@@ -88,7 +75,17 @@ See <a href="http://enable-javascript.com/" target="_blank">How to enable JavaSc
 </noscript>
 
 <?php
-if (!$posted)
+if (isset($_POST['uploadButton']))
+{
+	$errormsg = fetch_checklists();
+	if (!empty($errormsg))
+	{
+		foreach($errormsg as $emsg)
+			printError($emsg);
+		input_form();
+	}
+}
+else
 {
 	if (!empty($errormsg) || isset($_POST['cancelButton']))
 	{
@@ -96,12 +93,6 @@ if (!$posted)
 			printError($emsg);
 	}
 	input_form();
-}
-else 
-{
-	$success = fetch_checklists();
-	if (!$success)
-		input_form();
 }
 ?>
 </body>

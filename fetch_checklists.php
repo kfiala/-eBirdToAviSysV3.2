@@ -3,10 +3,16 @@ function fetch_checklists()
 {
 	global $myself;
 
-	$checklists = array();
+	$success = true;
 
-	if (!isset($_POST['checklists']))
-		die("No checklists");
+	$checklists = array();
+	$errormsg = array();
+
+	if (empty($_POST['checklists']))
+	{
+		$errormsg[] = "Please enter one or more checklist names in &ldquo;Checklist input&rdquo; and try again.";
+		return $errormsg;
+	}
 
 	$rawInput = $_POST['checklists'];
 
@@ -38,25 +44,28 @@ function fetch_checklists()
 		$URL = $viewURL . $submissionID;
 		$obj = curlCall($URL);
 
-		if ($obj == "")
+		if (isset($obj->errors))
 		{
-			die("<p>No data found</p>");
+			if ($obj->errors[0]->title == 'Field subId of checklistBySubIdCmd: subId is invalid.')
+				$errormsg[] = "&ldquo;$submissionID&rdquo; does not appear to be a valid eBird checklist. Please correct and retry.";
+			else
+				$errormsg[] = "An error occurred while attempting to fetch checklist $submissionID. Please correct and retry.";
+			continue;
+		}
+
+		if (empty($obj) || empty($obj->obs))
+		{
+			$errormsg[] = "No observations were found for checklist $submissionID. Please try again without this checklist.";
+			continue;
 		}
 
 		$checklistObject = new CheckList($obj,$submissionID);
 		if (isset($checklistObject->error))
 		{
-			printError($checklistObject->errorText);
-			exit;
+			$errormsg[] = $checklistObject->errorText;
+			continue;
 		}
 
-//		echo $checklistObject;
-
-		if (isset($obj->errors))
-		{
-			echo "<p>Error: ",$obj->errors[0]->title,"</p>";
-			die;
-		}
 		$checklists[] = $checklistObject;
 	}
 
@@ -85,19 +94,8 @@ function fetch_checklists()
 //				$locations[$locationIndex]->addTimeEffort($date,$startTime,$duration,$distance);
 		}
 	}
-/***************
-	if ($uploadcount == 0)
-	{
-		printError("Error: No files were successfully uploaded. Be sure to click the Browse... button and select a csv file.");
-		return(false);
-	}
-	if ($anyError)
-	{
-		cleanWork();
-		printError("Error: A file was not successfully uploaded. Please correct errors and try again.");
-		return(false);
-	}
-***************/
+	if (!empty($errormsg))
+		return $errormsg;
 ?>
 <p>The following eBird locations have been found in your upload.
 As necessary, change each location name to the corresponding AviSys place name.</p>
@@ -191,7 +189,7 @@ echo "<input type=hidden name='merged' value='$merged'>";
 <?php include "download.php"; ?>
 </div>
 <?php
-	return(True);
+	return;
 }
 
 ?>

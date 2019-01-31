@@ -7,7 +7,7 @@ class CheckList
 		{
 			$this->error = true;
 			if ($cornell->errors[0]->title == 'Field subId of checklistBySubIdCmd: subId is invalid.')
-				$this->errorText = "$submissionID does not appear to be a valid eBird checklist.";
+				$this->errorText = "$submissionID does not appear to be a valid eBird checklist. Please correct and retry.";
 			else
 				$this->errorText = "An error occurred while attempting to fetch checklist $submissionID.";
 			return;
