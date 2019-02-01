@@ -24,9 +24,10 @@ To be current with eBird, install the <a href="http://avisys.info/update/">2018 
 <?php
 	if (isset($_SESSION[APPNAME]['rawInput']))
 		echo $_SESSION[APPNAME]['rawInput'];
-	$unmerged = isset($_POST['merged']) && !$_POST['merged'];
-	$mergedOFF = $unmerged ? 'checked' : '';
-	$mergedON = $unmerged ? '' : 'checked';
+
+	$merged = isset($_SESSION[APPNAME]['merged']) ? $_SESSION[APPNAME]['merged'] : true;
+	$mergedON = $merged ? 'checked' : '';
+	$mergedOFF = $merged ? '' : 'checked';
 ?>
 </textarea>
 </div>

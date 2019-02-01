@@ -74,8 +74,12 @@ function fetch_checklists()
 	if (isset($_POST['merged']))
 	{
 		$merged = $_POST['merged'];
+		$_SESSION[APPNAME]['merged'] = $merged ? 1 : 0;
 	}
-	else $merged = true;
+	else if (isset($_SESSION[APPNAME]['merged']))
+		$merged = $_SESSION[APPNAME]['merged'];
+	else
+		$merged = true;
 
 	$locations = array();
 

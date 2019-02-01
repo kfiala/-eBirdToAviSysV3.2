@@ -31,7 +31,7 @@ class CheckList
 		if (isset($this->durationHrs))
 		{
 			$hours = intval($this->durationHrs);
-			$minutes = ceil(($this->durationHrs - $hours) * 60);
+			$minutes = floor(($this->durationHrs - $hours) * 60);
 			$this->effort .= " - $hours hours, $minutes minutes";
 		}
 		if (isset($this->effortDistanceKm) && $this->effortDistanceKm != '')

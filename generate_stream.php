@@ -18,7 +18,7 @@ function generate_stream()
 	$scode = $_POST['scode'];
 	$glocom = $_POST['glocom'];
 	$nsites = min(count($place),count($location),count($place_level),count($ccode),count($glocom));
-	$merged = $_POST['merged'];
+	$merged = $_SESSION[APPNAME]['merged'];
 
 	$stream = array();
 
