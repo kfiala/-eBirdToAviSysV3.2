@@ -7,7 +7,7 @@ and AviSys needs to know which one to use.
 </p>
 <p>If you have some information, maybe AviSys attribute codes or keywords, that you want inserted at the beginning
 of each comment for a location, enter it as the &ldquo;Global comment&rdquo;.
-<p>When you are ready, click &ldquo;Do it!&rdquo; and your stream file will be downloaded immediately.</p>
+<p>When you are ready, click &ldquo;Download&rdquo; and your stream file will be downloaded immediately.</p>
 <p>There are two possible kinds of download, depending on what kind of comments are in your checklist.
 If your eBird checklist has species comments, up to 80 characters
 of each comment will be entered in an AviSys comment.

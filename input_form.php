@@ -40,9 +40,9 @@ To be current with eBird, install the <a href="http://avisys.info/update/">2018 
 
 
 
-<input type="submit" style="width:5.5em;" value="Go!" name="uploadButton"
+<input type="submit" style="width:5.5em;" value="Go!" name="fetchButton"
 	onclick="document.getElementById('patience').style.display = 'block'; return true;">
-Click to use the selected checklist(s).
+Click to fetch the specified checklist(s) from eBird.
 
 
 </fieldset>
@@ -74,28 +74,29 @@ HEREDOC;
 ?>
 <h2>What you do</h2>
 <ol>
-<li>In the &ldquo;File upload&rdquo; form above, list one or more checklist names and click &ldquo;Go!&rdquo;.
+<li>In the &ldquo;Checklist input&rdquo; form above, list one or more checklist names and click &ldquo;Go!&rdquo;.
 	eBird to AviSys checklist import (Version 2) will fetch the checklists directly from eBird;
 	you no longer need to download them.
 <p>	
-Let's say you have a checklist https://ebird.org/view/checklist/S00000000. You can copy-and-paste just the "S00000000",
-or you can copy-and-paste the whole "https://ebird.org/view/checklist/S00000000".
+Let's say you have a checklist <a href="https://ebird.org/view/checklist/S46116491" target="_blank">https://ebird.org/view/checklist/S46116491</a>.
+	You can copy-and-paste just the "S46116491",
+or you can copy-and-paste the whole "https://ebird.org/view/checklist/S46116491".
 If you enter multiple checklists, enter them on separate lines, or else just separate them with spaces or commas.
-For example you could enter<br>
+For example you could enter<br><br>
 	<kbd>
-	S00000000<br>
-	S00000001<br>
-	S00000002<br>
+	S46116491<br>
+	S21594122<br>
+	S48759196<br>
 	</kbd><br>
-	or
-	<kbd>S00000000, S00000001, S00000002</kbd><br>
 	or<br>
-	<kbd>S00000000 S00000001 S00000002</kbd><br>
+	<kbd>S46116491, S21594122, S48759196</kbd><br><br>
+	or<br>
+	<kbd>S46116491 S21594122 S48759196</kbd><br>
 </p>
 </li>
 <li>On the next screen that you see, each eBird location that is in your input will be displayed.
 If the corresponding AviSys place has a different name, you can enter the correct AviSys place name.
-Then click the &ldquo;Do it!&rdquo; button that you will see.
+Then click the &ldquo;Download&rdquo; button that you will see.
 <a href="howtodownload.html" target="_blank">More details on this screen</a> will be shown when you get there.
 </li>
 <li>Your AviSys stream file will be downloaded. Save it on your computer, then run Avisys to import it.</li>

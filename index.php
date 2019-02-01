@@ -75,7 +75,7 @@ See <a href="http://enable-javascript.com/" target="_blank">How to enable JavaSc
 </noscript>
 
 <?php
-if (isset($_POST['uploadButton']))
+if (isset($_POST['fetchButton']))
 {
 	$errormsg = fetch_checklists();
 	if (!empty($errormsg))
@@ -87,13 +87,13 @@ if (isset($_POST['uploadButton']))
 }
 else
 {
-	if (!empty($errormsg) || isset($_POST['cancelButton']))
-	{
-		foreach($errormsg as $emsg)
-			printError($emsg);
-	}
+	foreach($errormsg as $emsg)
+		printError($emsg);
+	if (isset($_POST['cancelButton']) && $_POST['cancelButton'] == 'Reset')
+		unset($_SESSION[APPNAME]['rawInput']);
 	input_form();
 }
+
 ?>
 </body>
 </html>
