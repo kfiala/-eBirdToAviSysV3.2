@@ -41,7 +41,7 @@ function generate_stream()
 		if ($merged)
 			$locationIndex = $locationName;
 		else
-			$locationIndex = $locationName . $checklist->startTime;
+			$locationIndex = $locationName . $checklist->effort;
 		$location = $locationData[$locationIndex];
 
 		foreach ($checklist->obs as $sighting)
@@ -101,7 +101,6 @@ function generate_stream()
 	foreach(	$stream as $data )
 		fwrite($handle,$data->toStream());
 	fclose($handle);
-
 
 	if (count($notes))
 	{

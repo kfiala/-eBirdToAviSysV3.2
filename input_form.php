@@ -24,6 +24,9 @@ To be current with eBird, install the <a href="http://avisys.info/update/">2018 
 <?php
 	if (isset($_SESSION[APPNAME]['rawInput']))
 		echo $_SESSION[APPNAME]['rawInput'];
+	$unmerged = isset($_POST['merged']) && !$_POST['merged'];
+	$mergedOFF = $unmerged ? 'checked' : '';
+	$mergedON = $unmerged ? '' : 'checked';
 ?>
 </textarea>
 </div>
@@ -51,9 +54,9 @@ Click to fetch the specified checklist(s) from eBird.
 	<legend>Options</legend>
 	Summarize by<br>
 
-<label><input type="radio" name="merged" value="1" checked/>Location</label>
+<label><input type="radio" name="merged" value="1" <?php echo $mergedON;?>/>Location</label>
 <br>
-<label><input type="radio" name="merged" value="0" />Checklist</label>
+<label><input type="radio" name="merged" value="0" <?php echo $mergedOFF;?> />Checklist</label>
 <br><a href="#summarize"><span onmouseover="sumHI();">What's this?</span></a>
 <script>function sumHI(){document.getElementById('summarize').style.color='red';}</script>
 </fieldset>

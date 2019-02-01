@@ -23,26 +23,27 @@ class CheckList
 		$this->country = $geo[0];
 		$this->state = $geo[1];
 
+		// Set effort string
+		if ($this->obsTimeValid)
+			$this->effort = $this->obsDt;	// date and time
+		else
+			$this->effort = explode(' ',$this->obsDat)[0]; // just the date
+		if (isset($this->durationHrs))
+		{
+			$hours = intval($this->durationHrs);
+			$minutes = ceil(($this->durationHrs - $hours) * 60);
+			$this->effort .= " - $hours hours, $minutes minutes";
+		}
 		if (isset($this->effortDistanceKm) && $this->effortDistanceKm != '')
 		{
 			$km = $this->effortDistanceKm;
 			if ($this->effortDistanceEnteredUnit == 'mi')
 				$distance = sprintf('%.2f',$km * 0.62137119224) . ' miles';
 			else
-				$distance = "$km km";	
-		}
-		$this->startTime = $this->obsDt;
-		if (isset($this->durationHrs))
-		{
-			$hours = intval($this->durationHrs);
-			$minutes = floor(($this->durationHrs - $hours) * 60);
-			$this->startTime .= " - $hours hours, $minutes minutes";
-		}
-		
-		$this->effort = $this->startTime;
-		if (isset($distance))
+				$distance = "$km km";
 			$this->effort .=  " - $distance";
-		//Jan 27, 2019 – 8:51 AM – 2 hour(s), 2 minute(s) – 1.5 mile(s)
+		}
+		//	2019-01-28 09:31 – 2 hour(s), 2 minute(s) – 1.5 miles
 	}
 
 	function __toString()

@@ -25,10 +25,12 @@ function placeToolong(i) {
 	var toolong =  document.getElementById('toolong'+i);
 	if (AviSysPlace.length > 30)
 	{
+		toolong.style.display='block';
 		toolong.innerHTML = AviSysPlace + ' is too long to be an AviSys place name.';
 	}
 	else
 	{
+		toolong.style.display='none';
 		toolong.innerHTML = '';
 	}
 }

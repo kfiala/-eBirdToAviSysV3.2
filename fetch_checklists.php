@@ -86,12 +86,12 @@ function fetch_checklists()
 		$Avplace = $location;
 		$Avlevel = " ";
 
-		$locationIndex = $merged ? $location : $location . $checklist->startTime;
+		$locationIndex = $merged ? $location : $location . $checklist->effort;
 		if (!isset($locations[$locationIndex]))
 		{
 			$locations[$locationIndex] = new eBirdLocation($location,$Avplace,$Avlevel,$checklist->country,$checklist->state);
-//			if (!$merged)
-//				$locations[$locationIndex]->addTimeEffort($date,$startTime,$duration,$distance);
+			if (!$merged)
+				$locations[$locationIndex]->addEffort($checklist->effort);
 		}
 	}
 	if (!empty($errormsg))
@@ -108,7 +108,6 @@ HEREDOC;
 	echo $heredoc;
 	if ($merged)
 	{
-		$timeEffort = '';
 		$legendLabel = 'Location';
 		$eachComment = "each comment for this location";
 	}
@@ -126,13 +125,11 @@ HEREDOC;
 		$country = htmlspecialchars($ebirdloc->country);
 		$state = htmlspecialchars($ebirdloc->state);
 
-		if (!$merged)
+		if ($merged)
+			$effort = '';
+		else
 		{
-			$date = htmlspecialchars($ebirdloc->date);
-			$startTime = htmlspecialchars($ebirdloc->startTime);
-			$duration = htmlspecialchars($ebirdloc->duration);
-			$distance = htmlspecialchars($ebirdloc->distance);
-			$timeEffort = "$date &ndash; $startTime &ndash; $duration &ndash; $distance<br>";
+			$effort = htmlspecialchars($ebirdloc->effort);
 		}
 
 
@@ -158,14 +155,12 @@ HEREDOC;
 <option value="State" $stateselected>State</option>
 <option value="Nation" $nationselected>Nation</option>
 </select></label>
-
 <input type="hidden" name="ccode[$i]" value="$country">
 <input type="hidden" name="scode[$i]" value="$state">
-
 <span id=placewarn[$i] class="error" style="display:none;margin-left:30em">Please select the location type</span>
-<span class="error" id="toolong$i"></span><br>
-$timeEffort
-<label>Global comment:
+<span class="error" id="toolong$i" style="display:none;"></span><br>
+$effort
+<br><label>Global comment:
 <input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
 placeholder="Optional: info to insert in $eachComment"></label>
 <script>lookupPlace($i);placeToolong($i);</script>
@@ -177,11 +172,15 @@ HEREDOC;
 ?>
 <br style="clear:both" >
 <?php
-echo '<input type="submit" style="width:7em" value="Do it!" id="subbut" name="locButton" onclick="return checkType();">';
+echo '<input type="submit" style="width:7em" value="Download" id="subbut" name="locButton" onclick="return checkType();">';
 echo "<input type=hidden name='merged' value='$merged'>";
 ?>
 <input type="submit" style="width:7em" value="Cancel" id="canbut" name="cancelButton" />
-<span id=donemsg style="display:none">Processing complete, click Reset if you'd like to do another.</span>
+<span id=donemsg style="display:none">
+Processing complete, click Reset if you'd like a blank slate to do another.
+<br><input type="submit" style="width:7em" value="Retry" name="retryButton">
+Click Retry if you found errors that you need to correct.
+</span>
 </form>
 <div id=advice>
 <h2>How to use this form</h2>
