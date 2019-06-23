@@ -71,7 +71,7 @@ Click to fetch the specified checklist(s) from eBird.
 <h2>What it is</h2>
 <?php
 	$heredoc = <<<HEREDOC
-<p>eBird to AviSys checklist import will convert one or more eBird checklists files into an AviSys stream file 
+<p>eBird to AviSys checklist import will convert one or more eBird checklists into an AviSys stream file 
 with which you can import the data into AviSys (Version 6).</p>
 HEREDOC;
 	echo $heredoc,PHP_EOL;
@@ -107,6 +107,9 @@ Then click the &ldquo;Download&rdquo; button that you will see.
 <li>That's it!</li>
 </ol>
 
+<h3>What's a stream file?</h3>
+<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
+
 <h2>About species names</h2>
 <p>
 If AviSys does not recognize a species name while importing a stream file, 
@@ -135,19 +138,17 @@ eBird provides a feature to <a href="http://ebird.org/ebird/downloadMyData" targ
 eBird to AviSys checklist import will process that file too!
 But again, you will need to use <a href="../ebirdtoavisysV1/">Version 1</a>.
 
-<h3>What's a stream file?</h3>
-<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
-
 <h2 id="summarize">Summarize by location or checklist</h2>
 <p>
-When you upload your checklists, but before you generate the AviSys
-stream file, eBird to AviSys checklist import gives you a summary of
-what you have uploaded. By default, the summary is by location. In other
-words, no matter how many checklists you upload for a location, the
+Before you generate the AviSys stream file, 
+eBird to AviSys checklist import gives you a summary of what is in the checklists that you specified.
+In the summary, you can correct the AviSys place name, and you have the option to
+enter a global comment that will be added to all observations for that location.
+</p><p>
+By default, the summary is by location. 
+In other words, no matter how many checklists you select for a location, the
 summary will only have a single entry for the location. This is
-"Summarize by location". In the summary form, you have the option to
-enter a global comment that will be added to all observations for that
-location.
+"Summarize by location".
 </p><p>
 Sometimes you might prefer to be able to enter a custom comment for each
 checklist rather than for each location. In that case, select "Summarize

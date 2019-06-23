@@ -12,9 +12,8 @@ function lookupPlace(i) {
 		}
 		var placeInfo = localStorage.getItem('Place/'+AviSysLookup);
 		if (placeInfo) {
-			var info = placeInfo.split('/');
+			var info = placeInfo.split('/');	// backwards compatibility
 			document.getElementById('place_level'+i).value = info[0];
-			document.getElementById('ccode'+i).value = info[1];
 		}
 	}
 }
@@ -48,8 +47,7 @@ function savePlace(i) {
 	var AviSysPlace = document.getElementById('place'+i).value;
 	localStorage.setItem(eBirdLocation,AviSysPlace);
 	var placeType = document.getElementById('place_level'+i).value;
-	var country = document.getElementById('ccode'+i).value;
-	localStorage.setItem('Place/'+AviSysPlace,placeType+'/'+country);
+	localStorage.setItem('Place/'+AviSysPlace,placeType);
 }
 
 function clearPage()
