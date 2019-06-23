@@ -8,6 +8,8 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME']))	// Direct http 
 function getTaxonomy()
 {
 	$versions = curlCall('https://ebird.org/ws2.0/ref/taxonomy/versions');
+	if (!$versions)
+		die("Required eBird services appear to be down.");
 
 	foreach($versions as $tx)
 	{
