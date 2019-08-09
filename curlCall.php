@@ -10,7 +10,7 @@ function curlCall($URL)
 		$IP = $_SERVER["REMOTE_ADDR"];
 		$URL = urlencode($URL);
 		error_log ( "curl failure:\n$traceback\n From $IP: URL=$URL", 1, 'Kent.Fiala@gmail.com' );
-		die ("<p>Sorry, unable to fetch data.</p>");
+		die ("<p>Sorry, unable to fetch data. eBird may be down.</p>");
 	}
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -32,7 +32,7 @@ function curlCall($URL)
 		$URL = urlencode($URL);
 		error_log ( "json failure: $ce\n$traceback\n From $IP: URL=$URL", 1, 'Kent.Fiala@gmail.com' );
 
-		die("<p>Sorry, unable to fetch data: $ce</p>");
+		die("<p>Sorry, unable to fetch data: $ce. eBird may be down.</p>");
 	}
 	curl_close($ch);
 	return json_decode($json);
