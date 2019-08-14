@@ -4,7 +4,7 @@ function input_form()
 	global $myself;
 ?>
 <p style="color:red;"><strong>Note:</strong>
-To be current with eBird, install the <a href="http://avisys.info/update/">2018 Taxonomy Update for AviSys</a>.
+To be current with eBird, install the <a href="http://avisys.info/update/">2019 Taxonomy Update for AviSys</a>.
 </p>
 
 <div>
