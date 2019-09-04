@@ -54,7 +54,7 @@ function generate_stream()
 				$comments = "$location->comment $comments";
 			if (strlen($comments) > 80)
 			{
-				$fn = new FieldNote($comments);
+				$fn = new FieldNote($comments,$speciesLookup[$sighting->speciesCode],$location->AviSys,$sighting->obsDt);
 				$notes[] = $fn;
 				$fnid = $fn->id;
 			}

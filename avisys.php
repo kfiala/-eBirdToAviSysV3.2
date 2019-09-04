@@ -164,9 +164,9 @@ SPACE-padded string				"A4":		"END!"
 }
 class FieldNote
 {
-	var $id, $comment;
+	var $id, $comment,$species,$place,$date;
 
-	function __construct($comment)
+	function __construct($comment,$species,$place,$date)
 	{
 		$file = dirname(__FILE__).'/tempdir/fncounter.txt';
 		$fp = fopen($file,"r");
@@ -187,10 +187,15 @@ class FieldNote
 
 		$this->id = $counter;
 		$this->comment = $comment;
+		$this->species = $species;
+		$this->place = $place;
+		$this->date = $date;
 	}
 
 	function toStream()
 	{
+		$MAX_NOTE_LINES=60;
+
 		$comment = wordwrap($this->comment,72);
 		$line = explode("\n",$comment);
 		for ($i=0; $i<count($line); $i++)
@@ -199,11 +204,18 @@ class FieldNote
 			$line[$i] = pack("CA124",strlen($line[$i]),$line[$i]);
 		}
 		$stream = pack("VV",0,$this->id);
+
+		$header = "{$this->species} :: {$this->place} :: {$this->date}";
+		if (strlen($header) <= 72)
+			$header = str_pad($header, 72, " ", STR_PAD_BOTH);
+		$headerLine[] = pack("CA124",strlen($header),$header);
+
+		$line = array_merge($headerLine,$line);
 		$lines = min(count($line),60);
 		for ($i=0; $i<$lines; $i++)
 			$stream .= $line[$i];
 		$nullline = pack("CA124",0," ");
-		for ($i=$lines; $i < 60; $i++)
+		for ($i=$lines; $i < $MAX_NOTE_LINES; $i++)
 			$stream .= $nullline;
 		return $stream;
 	}
