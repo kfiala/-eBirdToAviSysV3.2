@@ -168,17 +168,25 @@ class FieldNote
 
 	function __construct($comment,$species,$place,$date)
 	{
-		$file = dirname(__FILE__).'/tempdir/fncounter.txt';
-		$fp = fopen($file,"r");
+		$file = dirname(__FILE__).'/fncounter.txt';
+		if (file_exists($file))
+			$fp = fopen($file,"r+");
+		else
+		{
+			$fp = fopen($file,"w");
+			$counter = 0;
+		}
 		if (flock($fp, LOCK_EX))
 		{
-			$counter = (int)fgets($fp);
-			fclose($fp);
+			if (!isset($counter))
+			{
+				$counter = (int)fgets($fp);
+				fseek($fp,0);
+			}
 			if ($counter < 2147483647)
 				$counter++;
 			else
 				$counter = 0;
-			$fp = fopen($file,"w");
 			fwrite($fp,"$counter\n");
 			fflush($fp);            // flush output before releasing the lock
 			flock($fp, LOCK_UN);    // release the lock

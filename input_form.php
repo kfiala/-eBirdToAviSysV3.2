@@ -4,13 +4,9 @@ function input_form()
 	global $myself;
 ?>
 <p style="color:red;"><strong>Note:</strong>
-To be current with eBird, install the <a href="http://avisys.info/update/">2019 Taxonomy Update for AviSys</a>.
+To be current with eBird, install the <a href="http://avisys.info/update/">current Taxonomy Update for AviSys</a>.
 </p>
-
 <div>
-<p style="color:blue">
-	<strong>New version! You no longer have to download your checklists; they are automatically retrieved directly from eBird!</strong>
-</p>
 </div>
 
 
@@ -192,19 +188,12 @@ Any dates older than 1930 will be recorded with a year of 1930.
 Dates after 2030 will be recorded with a year 100 years earlier.
 </p>
 
-<div style="float:right">
-<p>
-<a href="http://www.faintlake.com/ebirdtools/">More eBird tools</a>
-</p>
-<p>
-
-<a href="/txt/email.html" 
-	onblur='this.href="/txt/email.html"' 
-	onmouseout='this.href="/txt/email.html"' 
-	onfocus='this.href=qc()' 
-	onmouseover='this.href=qc()'>Questions or comments?</a>
-</p>
-</div>
+<?php
+	if (file_exists('local_code.html'))
+	{
+		include 'local_code.html';
+	}
+?>
 <?php
 }
  ?>

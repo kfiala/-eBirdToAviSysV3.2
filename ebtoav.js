@@ -1,4 +1,4 @@
-/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, qc */
+/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel */
 
 function lookupPlace(i) {
 	'use strict';
@@ -104,15 +104,4 @@ function place_sel(i)
 	document.getElementById(id).style.display='none';
 	savePlace(i);
 	return;
-}
-
-function qc()
-{
-	'use strict';
-var hst='gmail';
-var dmn='com';
-var usr='Kent.Fiala';
-var nm='Kent Fiala';
-var sj = '?' + 'sub' + 'jec' + 't=' + 'Question or comment on eBird to AviSys checklist import';
-return('m' + 'ailt' + 'o:' + nm + '<' + usr + '@' + hst + '.' + dmn + '>' + sj );
 }

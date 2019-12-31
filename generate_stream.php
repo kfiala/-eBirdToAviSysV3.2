@@ -92,11 +92,9 @@ function generate_stream()
 
 	$streamfile = 'eBird_AviSys';
 
-	$tempdir = dirname(__FILE__) . "/tempdir";
-
 	$workname = session_id();
 
-	$str_file = "$tempdir/$workname.str";
+	$str_file = "$workname.str";
 	$handle = fopen($str_file,"w");
 	foreach(	$stream as $data )
 		fwrite($handle,$data->toStream());
@@ -104,13 +102,13 @@ function generate_stream()
 
 	if (count($notes))
 	{
-		$notes_file = "$tempdir/$workname.fnr";
+		$notes_file = "$workname.fnr";
 		$handle = fopen($notes_file,"wb");
 		foreach( $notes as $data )
 			fwrite($handle,$data->toStream());
 		fclose($handle);
 		$zip = new ZipArchive();
-		$zipfile = "$tempdir/$workname.zip";
+		$zipfile = "$workname.zip";
 		if ($zip->open($zipfile,ZipArchive::CREATE) !== TRUE)
 			die("cannot open $zipfile");
 		$zip->addFile($str_file,"$streamfile.str");

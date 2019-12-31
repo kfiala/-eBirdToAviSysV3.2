@@ -48,7 +48,7 @@ if (isset($_POST['locButton']))
 <title>eBird to AviSys checklist import</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<script src='ebtoav1901.js'></script>
+<script src='ebtoav.js'></script>
 <link rel="stylesheet" type="text/css" href="eBird.css">
 <meta name="description" content="eBird to AviSys checklist import will convert eBird checklist files (in csv format) into an AviSys stream file with which you can import the data into AviSys." />
 <meta property="og:image" content="http://avisys.info/images/ebirdtoavisys.png"/>
@@ -75,6 +75,15 @@ See <a href="http://enable-javascript.com/" target="_blank">How to enable JavaSc
 </noscript>
 
 <?php
+$writeTest = 'test.file.txt';
+$checkWrite = touch($writeTest);
+if (!$checkWrite)
+{
+	die('Error: The server does not have permission to write files.');
+}
+else
+	unlink($writeTest);
+
 if (isset($_POST['fetchButton']))
 {
 	$errormsg = fetch_checklists();
