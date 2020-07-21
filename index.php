@@ -86,6 +86,7 @@ else
 
 if (isset($_POST['fetchButton']))
 {
+	set_time_limit(60);
 	$errormsg = fetch_checklists();
 	if (!empty($errormsg))
 	{
