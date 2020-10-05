@@ -57,13 +57,25 @@ Click to fetch the specified checklist(s) from eBird.
 <br><a href="#summarize"><span onmouseover="sumHI();">What's this?</span></a>
 <script>function sumHI(){document.getElementById('summarize').style.color='red';}</script>
 </fieldset>
+<fieldset style="float:left">
+	<legend>Excludes</legend>
+	<textarea id="excludes" name="excludes" cols=25 rows=4 onblur="saveExcludes()")">
+<?php
+	if (isset($_SESSION[APPNAME]['rawExcludes']))
+		echo $_SESSION[APPNAME]['rawExcludes'];
+	else
+		echo "See below for explanation.\n";
+?>
+	</textarea>
+	<script>getExcludes();</script>
+</fieldset>
 </form>
-<div style="display:inline-block;border:thin solid black;float:left;margin-left: 2em;padding:0 1em;width:15em">
+<br style="clear: both">
+<div style="max-width:53em">
 	<p>Do you need to upload CSV files? If so, you will need use
 		eBird to AviSys checklist import (Version 1).
 		<a href="../ebirdtoavisysV1/">Click here</a></p>
 </div>
-<br style="clear: both">
 <h2>What it is</h2>
 <?php
 	$heredoc = <<<HEREDOC
@@ -106,6 +118,14 @@ Then click the &ldquo;Download&rdquo; button that you will see.
 <h3>What's a stream file?</h3>
 <p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
 
+<h3>What are excludes?</h3>
+<p>You might have some species recorded in eBird that you don't want recorded in AviSys.
+These might include domestic forms like Muscovy Duck (Domestic type),
+non-countable exotics like Red-masked Parakeet, or others.
+Maybe you don't record these species yourself, but they show up on lists someone shares with you.
+You can exclude these species from the import from eBird by listing them,
+one per line,
+in the "Excludes" input.</p>
 <h2>About species names</h2>
 <p>
 If AviSys does not recognize a species name while importing a stream file, 

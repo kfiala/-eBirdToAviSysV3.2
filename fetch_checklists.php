@@ -1,4 +1,6 @@
 <?php
+require_once 'alphaOnly.php';
+
 function fetch_checklists()
 {
 	global $myself;
@@ -15,8 +17,11 @@ function fetch_checklists()
 	}
 
 	$rawInput = $_POST['checklists'];
+	$rawExcludes = $_POST['excludes'];
 
 	$_SESSION[APPNAME]['rawInput'] = $rawInput;
+	$_SESSION[APPNAME]['rawExcludes'] = $rawExcludes;
+	$_SESSION[APPNAME]['excluded'] = array();
 
 	$rawInput = preg_replace("/[,\r\n]/"," ",$rawInput);	// Change all commas or newlines to space
 	$rawInput = preg_replace("/ +/"," ",$rawInput);			// Change multiple spaces to single space
@@ -34,6 +39,20 @@ function fetch_checklists()
 		else
 			$submissionIDs[$i] = substr($input,$lastslash+1);
 	}
+//	Make the list of species to be excluded from checklists.
+	$excludes = preg_replace("/[\r\n]/","~",$_POST['excludes']);
+	$excludes = explode('~',$excludes);
+	if (count($excludes))
+		for ($i=count($excludes)-1; $i>=0; $i--)
+		{
+			$excludes[$i] = trim($excludes[$i]);
+			if (!$excludes[$i])
+				unset($excludes[$i]);
+			else
+			{
+				$excludes[$i] = alphaOnly($excludes[$i]);
+			}
+		}
 
 	$viewURL = 'https://ebird.org/ws2.0/product/checklist/view/';
 	foreach ($submissionIDs as $submissionID)
@@ -65,6 +84,8 @@ function fetch_checklists()
 			$errormsg[] = $checklistObject->errorText;
 			continue;
 		}
+//		Remove excluded species from this checklist
+		$checklistObject->exclude($excludes);
 
 		$checklists[] = $checklistObject;
 	}
@@ -186,6 +207,17 @@ Processing complete, click Reset if you'd like a blank slate to do another.
 Click Retry if you found errors that you need to correct.
 </span>
 </form>
+<?php
+if (!empty($_SESSION[APPNAME]['excluded']))
+{
+	echo "<h2>These species will be excluded from these checklists:</h2><ul>";
+	foreach ($_SESSION[APPNAME]['excluded'] as $pair)
+	{
+		echo "<li>{$pair['subId']}: {$pair['species']}</li>";
+	}
+	echo "</ul>";
+}
+?>
 <div id=advice>
 <h2>How to use this form</h2>
 <p>On this screen you see each eBird location that is in your input.

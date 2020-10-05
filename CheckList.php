@@ -1,4 +1,6 @@
 <?php
+require_once 'alphaOnly.php';
+
 class CheckList
 {
 	function __construct($cornell,$submissionID)
@@ -27,7 +29,7 @@ class CheckList
 		if ($this->obsTimeValid)
 			$this->effort = $this->obsDt;	// date and time
 		else
-			$this->effort = explode(' ',$this->obsDat)[0]; // just the date
+			$this->effort = explode(' ',$this->obsDt)[0]; // just the date
 		if (isset($this->durationHrs))
 		{
 			$hours = intval($this->durationHrs);
@@ -44,6 +46,24 @@ class CheckList
 			$this->effort .=  " - $distance";
 		}
 		//	2019-01-28 09:31 – 2 hour(s), 2 minute(s) – 1.5 miles
+	}
+
+	function exclude($excludes)
+	{	// Compare the list of species on this checklist with the exclude list. Remove matching species.
+		global $speciesLookup;
+		if (!empty($excludes))
+		{
+			foreach($this->obs as $key => $observationObject)
+			{
+				$observation = get_object_vars($observationObject);
+				$comName = $speciesLookup[$observation['speciesCode']];
+				if (in_array(alphaOnly($comName),$excludes))
+				{
+					$_SESSION[APPNAME]['excluded'][] = array('subId' => $this->subId,'species' => $comName);
+					unset($this->obs[$key]);
+				}
+			}
+		}
 	}
 
 	function __toString()

@@ -1,4 +1,4 @@
-/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel */
+/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, getExcludes, saveExcludes */
 
 function lookupPlace(i) {
 	'use strict';
@@ -48,6 +48,20 @@ function savePlace(i) {
 	localStorage.setItem(eBirdLocation,AviSysPlace);
 	var placeType = document.getElementById('place_level'+i).value;
 	localStorage.setItem('Place/'+AviSysPlace,placeType);
+}
+
+function getExcludes() {
+	'use strict';
+	var excludes = localStorage.getItem('excludes');
+	if (excludes) {
+		document.getElementById('excludes').value = excludes;
+	}
+}
+
+function saveExcludes() {
+	'use strict';
+	var excludes = document.getElementById('excludes').value;
+	localStorage.setItem('excludes',excludes);
 }
 
 function clearPage()
