@@ -23,4 +23,4 @@ but either way you need to unzip the two files and save them to your computer.
 When you tell AviSys to process the .str file, it will automatically also process the .fnr file that has the same filename.
 </p>
 
-<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p
+<p>Read the tutorial on <a href="import.html" target="_blank">using AviSys stream files to import data</a> if you are not familiar with the process.</p>
