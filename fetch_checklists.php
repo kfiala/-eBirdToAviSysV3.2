@@ -213,7 +213,7 @@ if (!empty($_SESSION[APPNAME]['excluded']))
 	echo "<h2>These species will be excluded from these checklists:</h2><ul>";
 	foreach ($_SESSION[APPNAME]['excluded'] as $pair)
 	{
-		echo "<li>{$pair['subId']}: {$pair['species']}</li>";
+		echo "<li><a href=https://ebird.org/checklist/{$pair['subId']} target=_blank>{$pair['subId']}</a>: {$pair['species']}</li>";
 	}
 	echo "</ul>";
 }
