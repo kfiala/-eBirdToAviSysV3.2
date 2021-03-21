@@ -12,7 +12,7 @@ function curlCall($URL)
 		$IP = $_SERVER["REMOTE_ADDR"];
 		$URL = urlencode($URL);
 		error_log ( "curl failure:\n$traceback\n From $IP: URL=$URL", 1, $error_email );
-		die ("<p>Sorry, unable to fetch data. eBird may be down.</p>");
+		die ("<p>Sorry, unable to fetch data. $downMessage</p>");
 	}
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -27,16 +27,14 @@ function curlCall($URL)
 	{
 		$ce = curl_error($ch);
 		curl_close($ch);
-
 		$e = new Exception;
 		$traceback = var_export($e->getTraceAsString(), true);
 		$IP = $_SERVER["REMOTE_ADDR"];
 		$URL = urlencode($URL);
-		error_log ( "json failure: $ce\n$traceback\n From $IP: URL=$URL", 1, $error_email );
-
-		die("<p>Sorry, unable to fetch data: $ce. eBird may be down.</p>");
+		die("<p>Sorry, unable to fetch data: $ce. $downMessage</p>");
 	}
 	curl_close($ch);
+
 	return json_decode($json);
 }
 ?>
