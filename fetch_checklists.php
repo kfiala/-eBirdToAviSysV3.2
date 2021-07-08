@@ -9,6 +9,7 @@ function fetch_checklists()
 
 	$checklists = array();
 	$errormsg = array();
+	$infomsg = array();
 
 	if (empty($_POST['checklists']))
 	{
@@ -74,8 +75,7 @@ function fetch_checklists()
 
 		if (empty($obj) || empty($obj->obs))
 		{
-			$errormsg[] = "No observations were found for checklist $submissionID. Please try again without this checklist.";
-			continue;
+			$infomsg[] = "NOTE: No observations were found in checklist $submissionID.";
 		}
 
 		$checklistObject = new CheckList($obj,$submissionID);
@@ -126,6 +126,12 @@ function fetch_checklists()
 As necessary, change each location name to the corresponding AviSys place name.</p>
 <p><strong>Important: The AviSys place names are case-sensitive!</strong></p>
 <?php
+	if (!empty($infomsg))
+	{
+		foreach($infomsg as $info)
+			printError($info);
+	}
+
 	$i = 0;
 	$heredoc = <<<HEREDOC
 <form method="POST" action="$myself" style="width:55em">
