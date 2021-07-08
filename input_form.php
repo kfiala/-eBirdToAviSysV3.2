@@ -59,7 +59,7 @@ Click to fetch the specified checklist(s) from eBird.
 </fieldset>
 <fieldset style="float:left">
 	<legend>Excludes</legend>
-	<textarea id="excludes" name="excludes" cols=25 rows=4 onblur="saveExcludes()")">
+	<textarea id="excludes" name="excludes" cols=40 rows=4 onblur="saveExcludes()")">
 <?php
 	if (isset($_SESSION[APPNAME]['rawExcludes']))
 		echo $_SESSION[APPNAME]['rawExcludes'];
