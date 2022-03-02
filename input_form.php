@@ -6,7 +6,13 @@ function input_form()
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.info/update/">current Taxonomy Update for AviSys</a>.
 </p>
-<div>
+<div style="border: medium solid darkseagreen;max-width: 75em;">
+	<p style="padding:0 .75em 0 3.70em;text-indent: -3em">New:</span>
+There's now an easier way to input checklists in this form.
+First, create an <a href="https://ebird.org/mytripreports">eBird Trip Report</a> for the checklists that you want to copy to AviSys.
+Then, use the new <a href="https://www.faintlake.com/eBird/extension/TripChecklists/" target="_blank">Browser Extension</a> 
+to obtain the list of URLs to paste into this form. (Then you can delete the Trip Report if you want.)
+</p>
 </div>
 
 
@@ -109,7 +115,7 @@ For example you could enter<br><br>
 <li>On the next screen that you see, each eBird location that is in your input will be displayed.
 If the corresponding AviSys place has a different name, you can enter the correct AviSys place name.
 Then click the &ldquo;Download&rdquo; button that you will see.
-<a href="howtodownload.html" target="_blank">More details on this screen</a> will be shown when you get there.
+<a href="howtodownload.php" target="_blank">More details on this screen</a> will be shown when you get there.
 </li>
 <li>Your AviSys stream file will be downloaded. Save it on your computer, then run Avisys to import it.</li>
 <li>That's it!</li>
