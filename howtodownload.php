@@ -8,7 +8,7 @@
 <body>
 <h1>Downloading an AviSys stream file</h1>
 
-<p>The download page displays each eBird location that is in your input.
+<p>The download page displays each eBird location that is in your input.</p>
 <?php include "download.php"; ?>
 
 </body>
