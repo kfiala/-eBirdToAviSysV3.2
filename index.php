@@ -6,6 +6,7 @@ require_once './getTaxonomy.php';
 require_once './getLocation.php';
 require_once 'input_form.php';
 require_once './fetch_checklists.php';
+require_once './list_results.php';
 require_once './generate_stream.php';
 require_once './curlCall.php';
 require_once './utilities.php';
@@ -20,7 +21,14 @@ if (!isset($_SESSION[APPNAME]['REFERER']))
 	$_SESSION[APPNAME]['REFERER'] = (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
 
 $errormsg = array();
-/* Quick exit with download */
+/* Quick exit with results or download */
+if (isset($_SESSION[APPNAME]['results']))
+{
+	unset($_SESSION[APPNAME]['results']);
+	list_results();
+	exit;
+}
+
 if (isset($_POST['locButton']))
 {
 	$place_level = isset($_POST['place_level']) ? $_POST['place_level'] : "";

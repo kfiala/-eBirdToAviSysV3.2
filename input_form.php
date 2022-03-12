@@ -43,13 +43,29 @@ to obtain the list of URLs to paste into this form. (Then you can delete the Tri
 <div class="conspicuous">
 <p id="patience" style="display:none;text-align:center">Fetching checklists from eBird... be patient</p>
 </div>
+<div id="bar_blank"><div id="bar_color"></div></div><div id="status"></div></div>
 
 
 
-<input type="submit" style="width:5.5em;" value="Go!" name="fetchButton"
-	onclick="document.getElementById('patience').style.display = 'block'; return true;">
+<script src="progress.js"></script> 
+
+<input id="submitButton" type="submit" style="width:5.5em;" value="Go!" name="fetchButton">
 Click to fetch the specified checklist(s) from eBird.
-
+<script>
+	var button = document.getElementById('submitButton');
+	button.addEventListener('click',setPatience,true);
+	button.addEventListener('click',startUpload,true);
+	button.addEventListener('click',clearErrMsgs,true);
+	function setPatience() {
+		document.getElementById('patience').style.display='block';
+	};
+	function clearErrMsgs() {
+		let emsg = document.getElementsByClassName('error');
+		for (const i=0; i<emsg.length; i++) {
+			emsg[i].style.display = 'none';	
+		}
+	}
+</script>
 
 </fieldset>
 

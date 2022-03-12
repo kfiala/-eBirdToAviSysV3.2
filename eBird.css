@@ -58,3 +58,6 @@ fieldset { font-family:sans-serif;
 				padding-top:4px;
 				border: 1px solid #000000
             }
+
+#bar_blank {height:20px;width:300px;display:none}
+#bar_color {background-color:#006666;height:20px;width:0px;}
