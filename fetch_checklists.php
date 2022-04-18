@@ -3,21 +3,20 @@ require_once 'alphaOnly.php';
 
 function fetch_checklists()
 {
-	global $myself;
 	unset($_SESSION[APPNAME]);
-
-	$success = true;
 
 	$checklists = array();
 	$errormsg = array();
 	$infomsg = array();
+	$nullmsg = "Please enter one or more checklists or trip reports and try again.";
 
 	if (empty($_POST['checklists']))
 	{
-		$errormsg[] = "Please enter one or more checklist names in &ldquo;Checklist input&rdquo; and try again.";
+		$errormsg[] = $nullmsg;
 		return $errormsg;
 	}
 
+	$submissionIDs = array();
 	$rawInput = $_POST['checklists'];
 	$rawExcludes = $_POST['excludes'];
 
@@ -28,20 +27,42 @@ function fetch_checklists()
 	$rawInput = preg_replace("/[,\r\n]/"," ",$rawInput);	// Change all commas or newlines to space
 	$rawInput = preg_replace("/ +/"," ",$rawInput);			// Change multiple spaces to single space
 	$rawInput = explode(' ',$rawInput);
-	$_SESSION[APPNAME]['nChecklists'] = count($rawInput);
-
-	$submissionIDs = array_map('trim',$rawInput);
-
-	$urlPath = 'https://ebird.org/view/checklist';
-	for ($i=0; $i<count($submissionIDs); $i++)
+	foreach (array_map('trim',$rawInput) as $input)
 	{
-		$input = $submissionIDs[$i];
-		$lastslash = strrpos($input,'/');
-		if ($lastslash === false)
-			$submissionIDs[$i] = $input;
+		if ($input == '')
+			continue;
+		$input = explode('?',$input)[0];
+		$pathElement = explode('/',$input);
+		if (count($pathElement) == 1)
+		{
+			$pathTypes[] = is_numeric($input) ? 'tripreport' : 'checklist';
+			$submissionIDs[] = $input;
+		}
 		else
-			$submissionIDs[$i] = substr($input,$lastslash+1);
+		{
+			$pcount = 0;
+			$valid = false;
+			foreach($pathElement as $element)
+			{
+				if ($element == 'checklist' || $element == 'tripreport')
+				{
+					$pathTypes[] = $element;
+					$submissionIDs[] = $pathElement[$pcount+1];
+					$valid = true;
+					break;
+				}
+				$pcount++;
+			}
+			if (!$valid)
+			{
+				$errormsg[] = "$input is not valid.";
+			}
+		}
 	}
+
+	if (!empty($errormsg))
+		return $errormsg;
+
 //	Make the list of species to be excluded from checklists.
 	$excludes = preg_replace("/[\r\n]/","~",$_POST['excludes']);
 	$excludes = explode('~',$excludes);
@@ -58,41 +79,36 @@ function fetch_checklists()
 		}
 
 	$viewURL = 'https://ebird.org/ws2.0/product/checklist/view/';
+	$tripURL = 'https://ebird.org/tripreport-internal/v1/checklists/';
+	$i=0;	
 	foreach ($submissionIDs as $submissionID)
 	{
-		if (!$submissionID)
-			continue;
+		$isTripReport = $pathTypes[$i++] == 'tripreport';
 
-		$URL = $viewURL . $submissionID;
-		$obj = curlCall($URL);
-
-		if (isset($obj->errors))
+		if ($isTripReport)
 		{
-			if ($obj->errors[0]->title == 'Field subId of checklistBySubIdCmd: subId is invalid.')
-				$errormsg[] = "&ldquo;$submissionID&rdquo; does not appear to be a valid eBird checklist. Please correct and retry.";
-			else
-				$errormsg[] = "An error occurred while attempting to fetch checklist $submissionID. Please correct and retry.";
-			continue;
-		}
+			$json = curlCall($tripURL . $submissionID,false);
 
-		if (empty($obj) || empty($obj->obs))
+			$trip_info = json_decode($json);
+			foreach ($trip_info as $checklist_info)
+			{
+				$checklistObject = getChecklistObject($viewURL, $checklist_info->subId, $errormsg);
+				appendChecklist($checklistObject,$checklists,$excludes);
+			}
+		}
+		else
 		{
-			$infomsg[] = "NOTE: No observations were found in checklist $submissionID.";
+			$checklistObject = getChecklistObject($viewURL, $submissionID, $errormsg);
+			appendChecklist($checklistObject,$checklists,$excludes);
 		}
-
-		$checklistObject = new CheckList($obj,$submissionID);
-		if (isset($checklistObject->error))
-		{
-			$errormsg[] = $checklistObject->errorText;
-			continue;
-		}
-//		Remove excluded species from this checklist
-		$checklistObject->exclude($excludes);
-
-		$checklists[] = $checklistObject;
 	}
 
-	$_SESSION[APPNAME]['checklists'] = $checklists;
+	if (empty($checklists))
+	{
+		if (empty($errormsg))
+			$errormsg[] = $nullmsg;
+		return $errormsg;
+	}
 
 	if (isset($_POST['merged']))
 	{
@@ -123,11 +139,40 @@ function fetch_checklists()
 	}
 	if (!empty($errormsg))
 		return $errormsg;
+
 	$_SESSION[APPNAME]['infomsg'] = $infomsg;
 	$_SESSION[APPNAME]['locations'] = $locations;
-	$_SESSION[APPNAME]['results'] = true;
-	header("Location: $myself");
 
-	exit;
+	$_SESSION[APPNAME]['checklists'] = $checklists;
+	return $errormsg;
+}
+
+function getChecklistObject($URL,$submissionID, &$errormsg)
+{
+	$obj = curlCall($URL . $submissionID);
+
+	$checklistObject = new CheckList($obj,$submissionID);
+	if ($checklistObject->error)
+	{
+		$errormsg[] = $checklistObject->errorText;
+		return;
+	}
+
+//	if (empty($checklistObject->obs))
+//	{
+//		$errormsg[] = "Note: No observations were found for checklist $submissionID.";
+//	}
+
+	return $checklistObject;
+
+}
+function appendChecklist($checklistObject,&$checklists,$excludes)
+{
+	if (is_object($checklistObject))
+	{
+		//		Remove excluded species from this checklist
+		$checklistObject->exclude($excludes);
+		$checklists[] = $checklistObject;
+	}
 }
 ?>

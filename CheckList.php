@@ -14,6 +14,7 @@ class CheckList
 				$this->errorText = "An error occurred while attempting to fetch checklist $submissionID.";
 			return;
 		}
+		$this->error = false;
 
 		foreach(get_object_vars($cornell) as $property => $value)
 		{

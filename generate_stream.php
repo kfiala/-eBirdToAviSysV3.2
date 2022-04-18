@@ -1,7 +1,7 @@
 <?php
 function generate_stream()
 {
-	global $myself, $maskList, $speciesLookup;
+	global $maskList, $speciesLookup;
 
 	$errormsg = array();
 

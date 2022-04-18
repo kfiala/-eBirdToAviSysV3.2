@@ -21,13 +21,6 @@ if (!isset($_SESSION[APPNAME]['REFERER']))
 	$_SESSION[APPNAME]['REFERER'] = (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "");
 
 $errormsg = array();
-/* Quick exit with results or download */
-if (isset($_SESSION[APPNAME]['results']))
-{
-	unset($_SESSION[APPNAME]['results']);
-	list_results();
-	exit;
-}
 
 if (isset($_POST['locButton']))
 {
@@ -51,7 +44,6 @@ if (isset($_POST['locButton']))
 ?>
 <!DOCTYPE HTML>
 <html lang="en">
-
 <head>
 <title>eBird to AviSys checklist import</title>
 <meta charset="utf-8">
@@ -68,10 +60,10 @@ if (isset($_POST['locButton']))
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="This site provides an easy way to import checklists from eBird into AviSys."/>
 
-   </head>
+</head>
 
 <body>
-<h1>eBird to AviSys checklist import (Version 2)</h1>
+<h1>eBird to AviSys checklist import (Version 3)</h1>
 
 <noscript>
 <p><span class=error>
@@ -96,7 +88,12 @@ if (isset($_POST['fetchButton']))
 {
 	set_time_limit(60);
 	$errormsg = fetch_checklists();
-	if (!empty($errormsg))
+	if (empty($errormsg))
+	{
+		list_results();
+		exit;
+	}
+	else
 	{
 		foreach($errormsg as $emsg)
 			printError($emsg);

@@ -4,6 +4,8 @@ function printError($message)
 	echo PHP_EOL,"<p><span class=error>$message</span></p>",PHP_EOL;
 }
 
+const LOGFILE = "logfile.txt";
+
 function logger()
 {
 	$logmsg = date("Y-m-d H:i:s") . " " . str_pad($_SERVER["REMOTE_ADDR"],16) . $_SESSION[APPNAME]['REFERER'] . " ~ ";
@@ -11,9 +13,19 @@ function logger()
 		$logmsg .= $_SERVER["HTTP_USER_AGENT"];
 	$logmsg .= "\n";
 
-	$logfile = "logfile.txt";
+	$fh = @fopen(LOGFILE,"ab");
+	if ($fh)
+	{
+		fwrite($fh,$logmsg);
+		fclose($fh);
+	}
+}
 
-	$fh = @fopen($logfile,"ab");
+function loginfo($record)
+{
+	$logmsg = date("Y-m-d H:i:s") . " " . str_pad($_SERVER["REMOTE_ADDR"],16) . " ~ $record\n";
+
+	$fh = @fopen(LOGFILE,"ab");
 	if ($fh)
 	{
 		fwrite($fh,$logmsg);

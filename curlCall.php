@@ -1,5 +1,6 @@
 <?php
-function curlCall($URL)
+require_once 'error_handler.php';
+function curlCall($URL,$useAPI=true)
 {
 	require 'curlConfig.php';
 
@@ -16,7 +17,13 @@ function curlCall($URL)
 	}
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-eBirdApiToken: $apiKey"));
+	if ($useAPI)
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array("X-eBirdApiToken: $apiKey"));
+	else
+	{	// --cookie '' -L
+		curl_setopt($ch, CURLOPT_COOKIEFILE,'');
+		curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
+	}
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 
 //	echo "<p>Calling curl on $URL</p>";
@@ -25,16 +32,14 @@ function curlCall($URL)
 
 	if ($json === false)
 	{
-		$ce = curl_error($ch);
-		curl_close($ch);
-		$e = new Exception;
-		$traceback = var_export($e->getTraceAsString(), true);
-		$IP = $_SERVER["REMOTE_ADDR"];
-		$URL = urlencode($URL);
-		die("<p>Sorry, unable to fetch data: $ce. $downMessage</p>");
+		error_handler($ch);
+		$json = '';
 	}
 	curl_close($ch);
-
-	return json_decode($json);
+	loginfo("Retrieved $URL");
+	if ($useAPI)
+		return json_decode($json);
+	else
+		return $json;
 }
 ?>

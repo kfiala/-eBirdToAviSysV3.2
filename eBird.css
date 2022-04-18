@@ -61,3 +61,19 @@ fieldset { font-family:sans-serif;
 
 #bar_blank {height:20px;width:300px;display:none}
 #bar_color {background-color:#006666;height:20px;width:0px;}
+
+.leftdiv {
+	display: inline-block;
+	padding: .5rem 1rem;
+	vertical-align: top;
+	background-color:lightcoral;
+	border: thin solid blue
+}
+.rightdiv {
+	display: inline-block;
+	border: 1px solid red;
+	padding: .5rem 1rem;
+	vertical-align: top;
+	width:40rem;
+}
+

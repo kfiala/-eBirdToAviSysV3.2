@@ -6,14 +6,16 @@ function input_form()
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.info/update/">current Taxonomy Update for AviSys</a>.
 </p>
-<div style="border: medium solid darkseagreen;max-width: 75em;">
-	<p style="padding:0 .75em 0 3.70em;text-indent: -3em">New:</span>
-There's now an easier way to input checklists in this form.
+<div class='leftdiv'>Version 3</div>
+<div class='rightdiv'>There's now a still easier way to input checklists in this form.
 First, create an <a href="https://ebird.org/mytripreports">eBird Trip Report</a> for the checklists that you want to copy to AviSys.
-Then, use the new <a href="https://www.faintlake.com/eBird/extension/TripChecklists/" target="_blank">Browser Extension</a> 
-to obtain the list of URLs to paste into this form. (Then you can delete the Trip Report if you want.)
-</p>
+Then just enter the URL of the trip report in this form.
+<!--
+If you prefer, you can instead use a <a href="https://www.faintlake.com/eBird/extension/TripChecklists/" target="_blank">Browser Extension</a> to obtain the list of URLs to paste into this form. 
+ -->
+After downloading, you can delete the Trip Report if you want.
 </div>
+
 
 
 <form method="POST" action="<?php echo $myself;?>" name="upform">
@@ -43,7 +45,7 @@ to obtain the list of URLs to paste into this form. (Then you can delete the Tri
 <div class="conspicuous">
 <p id="patience" style="display:none;text-align:center">Fetching checklists from eBird... be patient</p>
 </div>
-<div id="bar_blank"><div id="bar_color"></div></div><div id="status"></div></div>
+<div id="bar_blank"><div id="bar_color"></div></div><div id="status"></div>
 
 
 
@@ -81,7 +83,7 @@ Click to fetch the specified checklist(s) from eBird.
 </fieldset>
 <fieldset style="float:left">
 	<legend>Excludes</legend>
-	<textarea id="excludes" name="excludes" cols=40 rows=4 onblur="saveExcludes()")">
+	<textarea id="excludes" name="excludes" cols=40 rows=4 onblur="saveExcludes()">
 <?php
 	if (isset($_SESSION[APPNAME]['rawExcludes']))
 		echo $_SESSION[APPNAME]['rawExcludes'];
@@ -109,24 +111,24 @@ HEREDOC;
 <h2>What you do</h2>
 <ol>
 <li>In the &ldquo;Checklist input&rdquo; form above, list one or more checklist names and click &ldquo;Go!&rdquo;.
-	eBird to AviSys checklist import (Version 2) will fetch the checklists directly from eBird;
+	eBird to AviSys checklist import (Version 3) will fetch the checklists directly from eBird;
 	you no longer need to download them.
 <p>	
-Let's say you have a checklist <a href="https://ebird.org/view/checklist/S46116491" target="_blank">https://ebird.org/view/checklist/S46116491</a>.
+Let's say you have a checklist <a href="https://ebird.org/checklist/S46116491" target="_blank">https://ebird.org/checklist/S46116491</a>.
 	You can copy-and-paste just the "S46116491",
-or you can copy-and-paste the whole "https://ebird.org/view/checklist/S46116491".
+or you can copy-and-paste the whole "https://ebird.org/checklist/S46116491".
 If you enter multiple checklists, enter them on separate lines, or else just separate them with spaces or commas.
-For example you could enter<br><br>
-	<kbd>
-	S46116491<br>
-	S21594122<br>
-	S48759196<br>
-	</kbd><br>
-	or<br>
-	<kbd>S46116491, S21594122, S48759196</kbd><br><br>
-	or<br>
-	<kbd>S46116491 S21594122 S48759196</kbd><br>
-</p>
+For example you could enter</p>
+<pre>https://ebird.org/checklist/S60513355
+https://ebird.org/checklist/S60533760
+https://ebird.org/checklist/S60593564
+https://ebird.org/checklist/S60652303</pre>or
+	<pre>S60513355, S60533760, S60593564, S60652303</pre>or
+	<pre>S60513355 S60533760 S60593564 S60652303</pre>
+<p>Likewise for a trip report you could enter</p>
+<pre>https://ebird.org/tripreport/3380</pre>or just
+<pre>3380</pre>
+<p>You can enter more than one trip report.</p>
 </li>
 <li>On the next screen that you see, each eBird location that is in your input will be displayed.
 If the corresponding AviSys place has a different name, you can enter the correct AviSys place name.
