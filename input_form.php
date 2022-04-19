@@ -47,16 +47,11 @@ After downloading, you can delete the Trip Report if you want.
 </div>
 <div id="bar_blank"><div id="bar_color"></div></div><div id="status"></div>
 
-
-
-<script src="progress.js"></script> 
-
 <input id="submitButton" type="submit" style="width:5.5em;" value="Go!" name="fetchButton">
 Click to fetch the specified checklist(s) from eBird.
 <script>
 	var button = document.getElementById('submitButton');
 	button.addEventListener('click',setPatience,true);
-	button.addEventListener('click',startUpload,true);
 	button.addEventListener('click',clearErrMsgs,true);
 	function setPatience() {
 		document.getElementById('patience').style.display='block';
