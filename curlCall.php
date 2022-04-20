@@ -34,6 +34,7 @@ function curlCall($URL,$useAPI=true)
 	{
 		error_handler($ch);
 		$json = '';
+		exit;
 	}
 	curl_close($ch);
 	loginfo("Retrieved $URL");
