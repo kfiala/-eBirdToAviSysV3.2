@@ -110,6 +110,9 @@ function fetch_checklists()
 		return $errormsg;
 	}
 
+	// Sort checklists by date
+	usort($checklists,'dateCompare');
+
 	if (isset($_POST['merged']))
 	{
 		$merged = $_POST['merged'];
@@ -147,6 +150,11 @@ function fetch_checklists()
 	return $errormsg;
 }
 
+function dateCompare($a,$b)
+{
+   return strcmp($a->obsDt, $b->obsDt);
+}
+   
 function getChecklistObject($URL,$submissionID, &$errormsg)
 {
 	$obj = curlCall($URL . $submissionID);
