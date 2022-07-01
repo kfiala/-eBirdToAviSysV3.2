@@ -15,8 +15,9 @@ If you prefer, you can instead use a <a href="https://www.faintlake.com/eBird/ex
  -->
 After downloading, you can delete the Trip Report if you want.
 </div>
-
-
+<br>
+<div class='leftdiv'>Version 3.1</div>
+<div class='rightdiv'>"Slashes", "Spuhs", and Hybrids are automatically excluded.</div>
 
 <form method="POST" action="<?php echo $myself;?>" name="upform">
 <fieldset style="max-width:40em;float:left;">

@@ -67,7 +67,8 @@ fieldset { font-family:sans-serif;
 	padding: .5rem 1rem;
 	vertical-align: top;
 	background-color:lightcoral;
-	border: thin solid blue
+	border: thin solid blue;
+	width:6em;
 }
 .rightdiv {
 	display: inline-block;

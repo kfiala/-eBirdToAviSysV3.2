@@ -52,17 +52,15 @@ class CheckList
 	function exclude($excludes)
 	{	// Compare the list of species on this checklist with the exclude list. Remove matching species.
 		global $speciesLookup;
-		if (!empty($excludes))
+		foreach($this->obs as $key => $observationObject)
 		{
-			foreach($this->obs as $key => $observationObject)
+			$observation = get_object_vars($observationObject);
+			$comName = $speciesLookup[$observation['speciesCode']];
+			if (in_array(alphaOnly($comName),$excludes)
+			|| strpos($comName,'/') || strpos($comName,' x ') || strpos($comName,' sp.'))
 			{
-				$observation = get_object_vars($observationObject);
-				$comName = $speciesLookup[$observation['speciesCode']];
-				if (in_array(alphaOnly($comName),$excludes))
-				{
-					$_SESSION[APPNAME]['excluded'][] = array('subId' => $this->subId,'species' => $comName);
-					unset($this->obs[$key]);
-				}
+				$_SESSION[APPNAME]['excluded'][] = array('subId' => $this->subId,'species' => $comName);
+				unset($this->obs[$key]);
 			}
 		}
 	}
