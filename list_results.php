@@ -92,6 +92,7 @@ $effort
 <br><label>Global comment:
 <input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
 placeholder="Optional: info to insert in $eachComment"></label>
+<label><input id="autofill$i" type="checkbox" checked name="autofill$i">Autofill</label>
 <script>lookupPlace($i);placeToolong($i);</script>
 </fieldset>
 HEREDOC;

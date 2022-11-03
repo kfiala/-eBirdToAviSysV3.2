@@ -2,20 +2,26 @@
 
 function lookupPlace(i) {
 	'use strict';
-	var eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
 
-	var AviSysLookup = localStorage.getItem(eBirdLocation);
+	let AviSysLookup = localStorage.getItem(eBirdLocation);
 	if (AviSysLookup) {
 		document.getElementById('place'+i).value = AviSysLookup;
 		if (AviSysLookup !== eBirdLocation) {
-			document.getElementById('glocom'+i).value = eBirdLocation;
+			if (localStorage.getItem(eBirdLocation+'.noautofill')) {
+				document.getElementById('autofill'+i).checked = false;
+				document.getElementById('glocom'+i).value = '';
+			} else {
+				document.getElementById('glocom'+i).value = eBirdLocation;
+			}
 		}
-		var placeInfo = localStorage.getItem('Place/'+AviSysLookup);
+		let placeInfo = localStorage.getItem('Place/'+AviSysLookup);
 		if (placeInfo) {
-			var info = placeInfo.split('/');	// backwards compatibility
+			let info = placeInfo.split('/');	// backwards compatibility
 			document.getElementById('place_level'+i).value = info[0];
 		}
 	}
+	document.getElementById('autofill'+i).addEventListener('change',() => {autoFillToggle(i)});
 }
 
 function placeToolong(i) {
@@ -31,6 +37,17 @@ function placeToolong(i) {
 	{
 		toolong.style.display='none';
 		toolong.innerHTML = '';
+	}
+}
+
+function autoFillToggle(i) {
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	if (document.getElementById('autofill'+i).checked) {
+		document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerHTML;
+		localStorage.removeItem(eBirdLocation+'.noautofill');
+	} else {
+		document.getElementById('glocom'+i).value = '';
+		localStorage.setItem(eBirdLocation+'.noautofill',1);
 	}
 }
 
