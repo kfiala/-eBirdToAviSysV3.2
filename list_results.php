@@ -20,6 +20,15 @@ function list_results()
 <p>The following eBird locations have been found in your upload.
 As necessary, change each location name to the corresponding AviSys place name.</p>
 <p><strong>Important: The AviSys place names are case-sensitive!</strong></p>
+
+<div class='leftdiv'>Version 3.2</div>
+<div class='rightdiv'>
+Initially, the AviSys place name is filled in with the eBird location name.
+You can change this initial name to the correct AviSys place name if it is different from the eBird name.
+When you do this, the eBird location name is automatically filled into the global comment.
+If you don't want this to happen, uncheck the "Autofill" checkbox.
+</div>
+
 <?php
 	if (!empty($_SESSION[APPNAME]['infomsg']))
 	{
@@ -91,8 +100,8 @@ HEREDOC;
 $effort
 <br><label>Global comment:
 <input name="glocom[$i]" id="glocom$i" type="text" value="" style="margin-top:1em;width:44em" maxlength=80
-placeholder="Optional: info to insert in $eachComment"></label>
-<label><input id="autofill$i" type="checkbox" checked name="autofill$i">Autofill</label>
+placeholder="Optional: info to insert in $eachComment" onblur="glocomSave('$i')"></label>
+<label><input id="autofill$i" type="checkbox" name="autofill$i">Autofill</label>
 <script>lookupPlace($i);placeToolong($i);</script>
 </fieldset>
 HEREDOC;

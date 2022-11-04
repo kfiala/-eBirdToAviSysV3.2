@@ -63,7 +63,7 @@ if (isset($_POST['locButton']))
 </head>
 
 <body>
-<h1>eBird to AviSys checklist import (Version 3)</h1>
+<h1>eBird to AviSys checklist import (Version 3.2)</h1>
 
 <noscript>
 <p><span class=error>

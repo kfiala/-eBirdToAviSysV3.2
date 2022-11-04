@@ -1,27 +1,29 @@
-/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, getExcludes, saveExcludes */
+/* exported lookupPlace, filebutton, placeEdit, checkType, place_sel, getExcludes, saveExcludes, glocomSave */
 
 function lookupPlace(i) {
 	'use strict';
 	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
 
 	let AviSysLookup = localStorage.getItem(eBirdLocation);
-	if (AviSysLookup) {
-		document.getElementById('place'+i).value = AviSysLookup;
-		if (AviSysLookup !== eBirdLocation) {
-			if (localStorage.getItem(eBirdLocation+'.noautofill')) {
-				document.getElementById('autofill'+i).checked = false;
-				document.getElementById('glocom'+i).value = '';
-			} else {
-				document.getElementById('glocom'+i).value = eBirdLocation;
+	if (AviSysLookup) {	// If there is a saved AviSys place name for this eBird location
+		document.getElementById('place'+i).value = AviSysLookup;	// Fill in the AviSys place name
+//		if (AviSysLookup !== eBirdLocation) {	// If the names are different
+			if (localStorage.getItem(eBirdLocation+'.autofill')) {		// If there is a saved autofill for this location
+				document.getElementById('autofill'+i).checked = false;	// Turn off the autofill checkmark and 
+				// put the saved autofill in the global comment
+				document.getElementById('glocom'+i).value = localStorage.getItem(eBirdLocation+'.autofill').substring(1);
+			} else {	// But if no saved autofill
+				document.getElementById('autofill'+i).checked = true;			// Turn on the autofill checkmark
+				document.getElementById('glocom'+i).value = eBirdLocation;	// Put the eBird location name in the global comment
 			}
-		}
+//		}
 		let placeInfo = localStorage.getItem('Place/'+AviSysLookup);
 		if (placeInfo) {
 			let info = placeInfo.split('/');	// backwards compatibility
 			document.getElementById('place_level'+i).value = info[0];
 		}
 	}
-	document.getElementById('autofill'+i).addEventListener('change',() => {autoFillToggle(i)});
+	document.getElementById('autofill'+i).addEventListener('change',() => {autoFillToggle(i)});	// change listener for checkbox
 }
 
 function placeToolong(i) {
@@ -40,22 +42,26 @@ function placeToolong(i) {
 	}
 }
 
-function autoFillToggle(i) {
+function autoFillToggle(i) {	// When autofill checkbox is changed
 	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
-	if (document.getElementById('autofill'+i).checked) {
+	if (document.getElementById('autofill'+i).checked) {	// If it is checked
+		// Fill the global comment with the eBird location name
 		document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerHTML;
-		localStorage.removeItem(eBirdLocation+'.noautofill');
-	} else {
-		document.getElementById('glocom'+i).value = '';
-		localStorage.setItem(eBirdLocation+'.noautofill',1);
+		localStorage.removeItem(eBirdLocation+'.autofill');	// And remove any saved autofill 
+	} else {	// If it is unchecked
+		document.getElementById('glocom'+i).value = '';			// Blank out the global comment
+		localStorage.setItem(eBirdLocation+'.autofill','/');	// Store a blank autofill
 	}
 }
 
 function placeEdit(i)
-{
+{ // When the AviSys place name is edited
 	'use strict';
-	placeToolong(i);
+	placeToolong(i);  // Check if it is too long
+  // Copy the eBird location name to the global comment
 	document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerHTML;
+  // Check the autofill checkbox
+	document.getElementById('autofill'+i).checked = true;
 }
 
 function savePlace(i) {
@@ -65,6 +71,17 @@ function savePlace(i) {
 	localStorage.setItem(eBirdLocation,AviSysPlace);
 	var placeType = document.getElementById('place_level'+i).value;
 	localStorage.setItem('Place/'+AviSysPlace,placeType);
+}
+
+function glocomSave(i) { // When global comment is updated
+	'use strict';
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	let glocom = document.getElementById('glocom'+i).value;
+
+	if (eBirdLocation != glocom && glocom != '') {	// If there is a global comment and it does not match the eBird location
+		document.getElementById('autofill'+i).checked = false;		// Uncheck the autofill checkbox
+		localStorage.setItem(eBirdLocation+'.autofill','/'+glocom);	// Save the global comment as autofill
+	}
 }
 
 function getExcludes() {

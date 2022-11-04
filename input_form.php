@@ -6,18 +6,6 @@ function input_form()
 <p style="color:red;"><strong>Note:</strong>
 To be current with eBird, install the <a href="http://avisys.info/update/">current Taxonomy Update for AviSys</a>.
 </p>
-<div class='leftdiv'>Version 3</div>
-<div class='rightdiv'>There's now a still easier way to input checklists in this form.
-First, create an <a href="https://ebird.org/mytripreports">eBird Trip Report</a> for the checklists that you want to copy to AviSys.
-Then just enter the URL of the trip report in this form.
-<!--
-If you prefer, you can instead use a <a href="https://www.faintlake.com/eBird/extension/TripChecklists/" target="_blank">Browser Extension</a> to obtain the list of URLs to paste into this form. 
- -->
-After downloading, you can delete the Trip Report if you want.
-</div>
-<br>
-<div class='leftdiv'>Version 3.1</div>
-<div class='rightdiv'>"Slashes", "Spuhs", and Hybrids are automatically excluded.</div>
 
 <form method="POST" action="<?php echo $myself;?>" name="upform">
 <fieldset style="max-width:40em;float:left;">
@@ -107,8 +95,11 @@ HEREDOC;
 <h2>What you do</h2>
 <ol>
 <li>In the &ldquo;Checklist input&rdquo; form above, list one or more checklist names and click &ldquo;Go!&rdquo;.
-	eBird to AviSys checklist import (Version 3) will fetch the checklists directly from eBird;
-	you no longer need to download them.
+	eBird to AviSys checklist import (Version 3) will fetch the checklists directly from eBird.
+	If you have a large number of checklists, an easy way to handle them is to
+	create an <a href="https://ebird.org/mytripreports">eBird Trip Report</a> for the checklists that you want to import to AviSys.
+	Then just enter the URL of the trip report in this form.
+	After downloading, you can delete the Trip Report if you want.
 <p>	
 Let's say you have a checklist <a href="https://ebird.org/checklist/S46116491" target="_blank">https://ebird.org/checklist/S46116491</a>.
 	You can copy-and-paste just the "S46116491",
@@ -146,6 +137,7 @@ Maybe you don't record these species yourself, but they show up on lists someone
 You can exclude these species from the import from eBird by listing them,
 one per line,
 in the "Excludes" input.</p>
+<p>"Slashes", "Spuhs", and Hybrids are automatically excluded, because AviSys does not support these names.
 <h2>About species names</h2>
 <p>
 If AviSys does not recognize a species name while importing a stream file, 
@@ -157,14 +149,16 @@ with parenthetic qualifiers, e.g., &ldquo;Northern Flicker (Yellow-shafted)&rdqu
 You don't need to worry about these cases!
 eBird to AviSys checklist import will remove the parenthetic part of the name and insert it at the beginning of the AviSys comment.</p>
 <p>Another difference is that eBird allows &ldquo;sp&rdquo; or &ldquo;slash&rdquo; entries (e.g. Downy/Hairy Woodpecker).
-AviSys ignores these.
+AviSys does not allow such names.
 </p>
 
-<h2>Warning about system-hidden checklists</h2>
+<h2>Warning about system-hidden checklists or sensitive species.</h2>
 <p>A checklist that is flagged for some reason with a comment similar to 
 &ldquo;This checklist and its observations do not appear in public eBird outputs&rdquo;
 cannot be imported with this version. You will need to use
 <a href="../ebirdtoavisysV1/">Version 1</a></p>
+<p>Any species designated sensitive will be omitted from checklists, so if you have any records of sensitive species,
+you will likewise need to use <a href="../ebirdtoavisysV1/">Version 1</a>, or else enter the sensitive species manually.</p>
 
 <h2>Can I import from other sources?</h2>
 <p>Yes, but not with this version of eBird to AviSys checklist import. You will need to use
