@@ -47,7 +47,10 @@ function fetch_checklists()
 				if ($element == 'checklist' || $element == 'tripreport')
 				{
 					$pathTypes[] = $element;
-					$submissionIDs[] = $pathElement[$pcount+1];
+					$nextElement = $pathElement[++$pcount];
+					if ($element=='tripreport' && $nextElement = 'edit')
+						$nextElement = $pathElement[++$pcount];
+					$submissionIDs[] = $nextElement;
 					$valid = true;
 					break;
 				}
