@@ -2,12 +2,12 @@
 
 function lookupPlace(i) {
 	'use strict';
-	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerText;
 
 	let AviSysLookup = localStorage.getItem(eBirdLocation);
 	if (AviSysLookup) {	// If there is a saved AviSys place name for this eBird location
 		document.getElementById('place'+i).value = AviSysLookup;	// Fill in the AviSys place name
-//		if (AviSysLookup !== eBirdLocation) {	// If the names are different
+		if (AviSysLookup !== eBirdLocation) {	// If the names are different
 			if (localStorage.getItem(eBirdLocation+'.autofill')) {		// If there is a saved autofill for this location
 				document.getElementById('autofill'+i).checked = false;	// Turn off the autofill checkmark and 
 				// put the saved autofill in the global comment
@@ -16,7 +16,7 @@ function lookupPlace(i) {
 				document.getElementById('autofill'+i).checked = true;			// Turn on the autofill checkmark
 				document.getElementById('glocom'+i).value = eBirdLocation;	// Put the eBird location name in the global comment
 			}
-//		}
+		}
 		let placeInfo = localStorage.getItem('Place/'+AviSysLookup);
 		if (placeInfo) {
 			let info = placeInfo.split('/');	// backwards compatibility
@@ -33,20 +33,20 @@ function placeToolong(i) {
 	if (AviSysPlace.length > 30)
 	{
 		toolong.style.display='block';
-		toolong.innerHTML = AviSysPlace + ' is too long to be an AviSys place name.';
+		toolong.innerText = AviSysPlace + ' is too long to be an AviSys place name.';
 	}
 	else
 	{
 		toolong.style.display='none';
-		toolong.innerHTML = '';
+		toolong.innerText = '';
 	}
 }
 
 function autoFillToggle(i) {	// When autofill checkbox is changed
-	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerText;
 	if (document.getElementById('autofill'+i).checked) {	// If it is checked
 		// Fill the global comment with the eBird location name
-		document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerHTML;
+		document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerText;
 		localStorage.removeItem(eBirdLocation+'.autofill');	// And remove any saved autofill 
 	} else {	// If it is unchecked
 		document.getElementById('glocom'+i).value = '';			// Blank out the global comment
@@ -59,14 +59,14 @@ function placeEdit(i)
 	'use strict';
 	placeToolong(i);  // Check if it is too long
   // Copy the eBird location name to the global comment
-	document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerHTML;
+	document.getElementById('glocom'+i).value = document.getElementById('eBirdLocation'+i).innerText;
   // Check the autofill checkbox
 	document.getElementById('autofill'+i).checked = true;
 }
 
 function savePlace(i) {
 	'use strict';
-	var eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	var eBirdLocation = document.getElementById('eBirdLocation'+i).innerText;
 	var AviSysPlace = document.getElementById('place'+i).value;
 	localStorage.setItem(eBirdLocation,AviSysPlace);
 	var placeType = document.getElementById('place_level'+i).value;
@@ -75,7 +75,7 @@ function savePlace(i) {
 
 function glocomSave(i) { // When global comment is updated
 	'use strict';
-	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerHTML;
+	let eBirdLocation = document.getElementById('eBirdLocation'+i).innerText;
 	let glocom = document.getElementById('glocom'+i).value;
 
 	if (eBirdLocation != glocom && glocom != '') {	// If there is a global comment and it does not match the eBird location
